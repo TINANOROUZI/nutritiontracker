@@ -1,0 +1,12 @@
+# Ignore environment files
+.env
+
+# Ignore dependencies
+node_modules
+
+# Ignore build output
+dist
+
+
+# Local Netlify folder
+.netlify

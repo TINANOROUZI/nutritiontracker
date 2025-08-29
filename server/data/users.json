@@ -1,0 +1,21 @@
+[
+  {
+    "id": "meuiut0g4me8zpza27n",
+    "email": "tinanoruzi14@gmail.com",
+    "name": "hhh",
+    "passHash": "$2b$10$2cgc2bsPoFfrpPoBPDb8pOLoHYd9bV5w6pyknMrAuxjPSE3r2nCJC",
+    "history": [
+      {
+        "id": "meulzrn0",
+        "ts": "2025-08-27T23:31:28.776Z",
+        "foodKey": "pizza",
+        "grams": 440,
+        "kcal": 1170,
+        "protein": 48.4,
+        "carbs": 145.2,
+        "fat": 44,
+        "label": "pizza"
+      }
+    ]
+  }
+]
