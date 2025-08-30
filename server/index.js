@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-const fetch = require("node-fetch");
+// ⛔ removed: const fetch = require("node-fetch");
 const fs = require("fs/promises");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -18,13 +18,26 @@ const PORT = process.env.PORT || 5001;
 const HF_API_TOKEN = (process.env.HF_API_TOKEN || "").trim();
 const MODEL_ID = process.env.MODEL_ID || "nateraw/food";
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+const IS_PROD = process.env.NODE_ENV === "production";
 
 // ---- CORS + parsers
 app.use(cookieParser());
 app.use(express.json());
+
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
+  "http://localhost:5173,http://127.0.0.1:5173")
+  .split(",")
+  .map(s => s.trim());
+
 app.use(
   cors({
-    origin: [/^http:\/\/localhost:5173$/, /^http:\/\/127\.0\.0\.1:5173$/],
+    origin(origin, cb) {
+      // allow same-origin / curl / server-to-server (no origin header)
+      if (!origin) return cb(null, true);
+      return ALLOWED_ORIGINS.includes(origin)
+        ? cb(null, true)
+        : cb(new Error("CORS: origin not allowed"));
+    },
     credentials: true,
   })
 );
@@ -34,14 +47,9 @@ const DATA_DIR = path.join(__dirname, "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 
 async function ensureData() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch {}
-  try {
-    await fs.access(USERS_FILE);
-  } catch {
-    await fs.writeFile(USERS_FILE, JSON.stringify([]));
-  }
+  try { await fs.mkdir(DATA_DIR, { recursive: true }); } catch {}
+  try { await fs.access(USERS_FILE); }
+  catch { await fs.writeFile(USERS_FILE, JSON.stringify([])); }
 }
 ensureData();
 
@@ -69,12 +77,12 @@ function setAuthCookie(res, token) {
   res.cookie("auth", token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: false, // set true in production behind HTTPS
+    secure: IS_PROD,            // ✅ secure in production
     maxAge: 7 * 24 * 3600 * 1000,
   });
 }
 function clearAuthCookie(res) {
-  res.clearCookie("auth", { httpOnly: true, sameSite: "lax", secure: false });
+  res.clearCookie("auth", { httpOnly: true, sameSite: "lax", secure: IS_PROD });
 }
 function requireAuth(req, res, next) {
   const token = req.cookies?.auth;
@@ -87,22 +95,24 @@ function requireAuth(req, res, next) {
   }
 }
 
+// ---- Health check for Render
+app.get("/ping", (_req, res) => res.send("ok"));
+
 // ---- AUTH ROUTES
 app.post("/api/auth/register", async (req, res) => {
   const { email, password, name = "" } = req.body || {};
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ error: "Email and password are required" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
 
   const users = await readUsers();
-  if (users.find((u) => u.email.toLowerCase() === email.toLowerCase()))
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
     return res.status(409).json({ error: "Email already registered" });
+  }
 
   const passHash = await bcrypt.hash(password, 10);
   const user = {
-    id:
-      Date.now().toString(36) + Math.random().toString(36).slice(2),
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
     email: email.toLowerCase(),
     name,
     passHash,
@@ -118,15 +128,12 @@ app.post("/api/auth/register", async (req, res) => {
 
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body || {};
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ error: "Email and password are required" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
 
   const users = await readUsers();
-  const user = users.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase()
-  );
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
   const ok = await bcrypt.compare(password, user.passHash);
@@ -137,14 +144,14 @@ app.post("/api/auth/login", async (req, res) => {
   res.json({ id: user.id, email: user.email, name: user.name });
 });
 
-app.post("/api/auth/logout", (req, res) => {
+app.post("/api/auth/logout", (_req, res) => {
   clearAuthCookie(res);
   res.json({ ok: true });
 });
 
 app.get("/api/auth/me", requireAuth, async (req, res) => {
   const users = await readUsers();
-  const user = users.find((u) => u.id === req.user.uid);
+  const user = users.find(u => u.id === req.user.uid);
   if (!user) return res.status(401).json({ error: "No such user" });
   res.json({ id: user.id, email: user.email, name: user.name });
 });
@@ -176,7 +183,7 @@ app.get("/api/nutrition", (req, res) => {
 // ---- Per-user history (protected)
 app.get("/api/history", requireAuth, async (req, res) => {
   const users = await readUsers();
-  const user = users.find((u) => u.id === req.user.uid);
+  const user = users.find(u => u.id === req.user.uid);
   if (!user) return res.status(401).json({ error: "No such user" });
   res.json(user.history || []);
 });
@@ -184,7 +191,7 @@ app.get("/api/history", requireAuth, async (req, res) => {
 app.post("/api/history", requireAuth, async (req, res) => {
   const entry = req.body || {};
   const users = await readUsers();
-  const idx = users.findIndex((u) => u.id === req.user.uid);
+  const idx = users.findIndex(u => u.id === req.user.uid);
   if (idx === -1) return res.status(401).json({ error: "No such user" });
 
   const e = { id: Date.now().toString(36), ...entry };
@@ -193,17 +200,16 @@ app.post("/api/history", requireAuth, async (req, res) => {
   res.json(e);
 });
 
-// ---- ML ANALYZE (logs + retries + clearer errors + optional mock)
+// ---- ML ANALYZE with retries + safe JSON handling
 app.post("/api/analyze", upload.single("image"), async (req, res) => {
   try {
-    // Optional local mock to keep UI working while debugging HF
     if (process.env.MOCK_ANALYZE === "1") {
       const predictions = [
         { label: "pizza", score: 0.92 },
         { label: "hamburger", score: 0.05 },
         { label: "salad", score: 0.03 },
       ];
-      const suggestions = predictions.slice(0, 5).map((p) => ({
+      const suggestions = predictions.slice(0, 5).map(p => ({
         key: p.label.toLowerCase().replace(/[^a-z0-9]+/g, "_"),
         rawLabel: p.label,
         score: p.score,
@@ -212,12 +218,9 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
       return res.json({ predictions, suggestions });
     }
 
-    const token = HF_API_TOKEN;
-    if (!token || !token.startsWith("hf_")) {
+    if (!HF_API_TOKEN || !HF_API_TOKEN.startsWith("hf_")) {
       console.error("[analyze] Missing/invalid HF_API_TOKEN.");
-      return res
-        .status(500)
-        .json({ error: "HF_API_TOKEN not set or invalid on server" });
+      return res.status(500).json({ error: "HF_API_TOKEN not set or invalid on server" });
     }
 
     const bytes = req.file?.buffer;
@@ -225,7 +228,7 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
 
     const url = `https://api-inference.huggingface.co/models/${MODEL_ID}`;
     const headers = {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${HF_API_TOKEN}`,
       "Content-Type": "application/octet-stream",
       Accept: "application/json",
     };
@@ -233,49 +236,40 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
     async function callHF(attempt = 1) {
       const r = await fetch(url, { method: "POST", headers, body: bytes });
 
-      // Cold-start: model loading (503)
       if (r.status === 503 && attempt < 4) {
         const t = await r.text().catch(() => "");
-        console.warn(
-          `[analyze] HF 503/Loading (attempt ${attempt}/3):`,
-          t
-        );
-        await new Promise((s) => setTimeout(s, 1500 * attempt));
+        console.warn(`[analyze] HF 503/Loading (attempt ${attempt}/3):`, t);
+        await new Promise(s => setTimeout(s, 1500 * attempt));
         return callHF(attempt + 1);
       }
 
+      const rawText = await r.text().catch(() => "");
       if (!r.ok) {
-  const t = await r.text().catch(() => "");
-  console.error(`[analyze] HF error ${r.status}:`, t);
-  return res
-    .status(r.status)
-    .json({ error: t || `Hugging Face error ${r.status}` });
-}
+        return { ok: false, status: r.status, body: rawText };
+      }
 
-// 👇 NEW DEBUGGING BLOCK
-const rawText = await r.text();
-console.log("[HF raw response]", rawText);
-
-let parsed;
-try {
-  parsed = JSON.parse(rawText);
-} catch (e) {
-  console.error("[analyze] JSON parse error:", e);
-  return res.status(500).json({ error: "Invalid JSON from HF", raw: rawText });
-}
-return parsed;
-
+      let parsed;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (e) {
+        return { ok: false, status: 500, body: "Invalid JSON from HF", raw: rawText };
+      }
+      return { ok: true, data: parsed };
     }
 
-    const out = await callHF();
-    if (!out) return; // error already sent
+    const result = await callHF();
+    if (!result.ok) {
+      console.error(`[analyze] HF error ${result.status}:`, result.body);
+      return res.status(result.status).json({ error: result.body || `Hugging Face error ${result.status}`, raw: result.raw });
+    }
 
-    const predictions = (Array.isArray(out) ? out : []).map((o) => ({
+    const out = result.data;
+    const predictions = (Array.isArray(out) ? out : []).map(o => ({
       label: o.label,
       score: o.score,
     }));
 
-    const suggestions = predictions.slice(0, 5).map((p) => ({
+    const suggestions = predictions.slice(0, 5).map(p => ({
       key: p.label.toLowerCase().replace(/[^a-z0-9]+/g, "_"),
       rawLabel: p.label,
       score: p.score,
