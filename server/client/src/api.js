@@ -1,10 +1,11 @@
 // src/api.js
 
-// Base URL to your server (e.g., http://localhost:5001)
-// Falls back to localhost if Vite env is missing.
-// Also trims any trailing slash to avoid `//api/...`
-const API =
-  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, "") : "http://localhost:5001");
+// Base URL to your server (uses Netlify env if set, otherwise your Render URL)
+const API = (
+  import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL
+    : "https://nutrition-tracker-t8be.onrender.com"
+).replace(/\/$/, "");
 
 // --- small helper to parse error messages from the server
 async function parseError(resp) {
@@ -38,7 +39,6 @@ async function request(path, opts = {}) {
   if (!res.ok) {
     throw new Error(await parseError(res));
   }
-  // try json, fall back to text
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("application/json")) return res.json();
   return res.text();
@@ -49,7 +49,7 @@ async function request(path, opts = {}) {
 // =======================================================
 export async function analyzeImage(file) {
   const fd = new FormData();
-  fd.append("image", file); // let the browser set the multipart boundary
+  fd.append("image", file);
   const res = await fetch(`${API}/api/analyze`, {
     method: "POST",
     body: fd,
@@ -71,14 +71,11 @@ export async function computeNutrition(foodKey, grams) {
 // =======================================================
 // Auth
 // =======================================================
-
-// Accepts either register({email, password, name}) OR register(email, password, name)
 export async function register(a, b, c) {
   const payload = typeof a === "object" ? a : { email: a, password: b, name: c };
   return request("/api/auth/register", { method: "POST", json: payload });
 }
 
-// Accepts either login({email, password}) OR login(email, password)
 export async function login(a, b) {
   const payload = typeof a === "object" ? a : { email: a, password: b };
   return request("/api/auth/login", { method: "POST", json: payload });
@@ -88,7 +85,6 @@ export async function logout() {
   return request("/api/auth/logout", { method: "POST" });
 }
 
-// Returns user object or null (if not logged in)
 export async function me() {
   try {
     return await request("/api/auth/me");
