@@ -1,4 +1,6 @@
-// src/App.jsx
+// server/client/src/App.jsx
+import "./styles/crono.css"; // <-- MAKE SURE THIS LINE EXISTS
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import Analyze from "./pages/Analyze.jsx";
@@ -20,11 +22,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Analyze />} />
-
-        {/* NEW: public exercises page */}
         <Route path="/exercises" element={<Exercises />} />
-
-        {/* History: requires login */}
         <Route
           path="/history"
           element={
@@ -33,7 +31,6 @@ export default function App() {
             </Protected>
           }
         />
-
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
