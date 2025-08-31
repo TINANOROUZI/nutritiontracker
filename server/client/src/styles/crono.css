@@ -77,13 +77,13 @@ header.nav .links a{
 }
 header.nav .links a:hover{ background:#15213d }
 
-/* hamburger visible by default (mobile) */
+/* hamburger visible by default */
 header.nav .hamburger{
   display:inline-flex !important;
   align-items:center;
   justify-content:center;
   width:40px; height:40px;
-  margin-left:auto;                   /* push to right */
+  margin-left:auto;
   border-radius:10px;
   border:1px solid rgba(255,255,255,.16);
   background: rgba(255,255,255,.06);
@@ -138,12 +138,24 @@ header.nav .hamburger span + span{ margin-top:5px }
   background:#101732; border:1px solid #1c2750; color:#cfe1ff;
 }
 
-/* footer centered (unchanged from before) */
+/* ===================== BMI responsiveness ===================== */
+.bmi-card{ background:linear-gradient(180deg,#151c2c,#0f1524); border:1px solid #1e2a4b; border-radius:18px; padding:1rem; box-shadow:0 10px 40px rgba(0,0,0,.35); }
+.bmi-io{ display:grid; grid-template-columns:1fr; gap:.7rem; }
+@media (min-width: 700px){
+  .bmi-io{ grid-template-columns:1fr 1fr; }
+}
+
+/* ===================== Feature cards mobile image ===================== */
+.feature .f-img{ height: 180px; background-size: cover; background-position: center; }
+@media (min-width: 900px){ .feature .f-img{ height:240px; } }
+
+/* ===================== Centered footer ===================== */
 .footer{
   display:flex; justify-content:center; align-items:center;
   color:#a4b7d8; border-top:1px solid #16223e;
   padding: 16px 0; margin-top: 24px;
 }
+
 
 /* ===================== HERO/FEATURES ===================== */
 .features{margin:1.2rem 0 1.8rem}
