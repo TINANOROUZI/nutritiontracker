@@ -6,14 +6,15 @@ import { useAuth } from "../auth/AuthContext.jsx";
 
 const pageMeta = {
   "/": { title: "AI-Powered Nutrition Tracker", subtitle: "Upload a meal photo → instant calories & macros." },
-  "/devices": { title: "Devices", subtitle: "Connect Apple Health® & Google Fit™." },
+  "/devices": { title: "Sync with your devices", subtitle: "Apple Health & Google Fit integrations." },
   "/exercises": { title: "Exercises", subtitle: "Find workouts you love and stay motivated." },
   "/history": { title: "History", subtitle: "Your saved meals and nutrition estimates." },
   "/about": { title: "About", subtitle: "Full-stack + ML demo for smarter nutrition." },
-  "/login": { title: "Log in", subtitle: "Access your saved meals from anywhere." }
+  "/login": { title: "Log in", subtitle: "Access your saved meals from anywhere." },
+  "/signup": { title: "Sign up", subtitle: "Create your account in seconds." }
 };
 
-export default function Layout(){
+export default function Layout() {
   const { pathname } = useLocation();
   const meta = pageMeta[pathname] || pageMeta["/"];
   const { user, logout } = useAuth();
@@ -23,9 +24,9 @@ export default function Layout(){
   const close = () => setOpen(false);
   const toggle = () => setOpen(v => !v);
 
-  useEffect(() => { close(); }, [pathname]); // close drawer on route change
+  useEffect(() => { close(); }, [pathname]);
   useEffect(() => {
-    const onKey = e => e.key === "Escape" && close();
+    const onKey = (e) => e.key === "Escape" && close();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
@@ -35,21 +36,16 @@ export default function Layout(){
   return (
     <>
       <header className="nav">
-        <div className="nav-row">
-          <div className="brand">🍎 NutriVision</div>
+        <div className="nav-inner">
+          <div className="brand">🍎 <span>NutriVision</span></div>
 
-          {/* desktop links (old, working class name) */}
-          <nav className="nav-links">
+          {/* Desktop links (hidden on mobile via CSS) */}
+          <nav className="links">
             <NavLink to="/" end>Home</NavLink>
-            {" "}
             <NavLink to="/devices">Devices</NavLink>
-            {" "}
             <NavLink to="/exercises">Exercises</NavLink>
-            {" "}
             <NavLink to="/history">History</NavLink>
-            {" "}
             <NavLink to="/about">About</NavLink>
-            {" "}
             {!user && <NavLink to="/login">Log in</NavLink>}
             {user && (
               <>
@@ -61,10 +57,10 @@ export default function Layout(){
             )}
           </nav>
 
-          {/* hamburger (only visible on mobile) */}
+          {/* Hamburger — shown on mobile only (CSS) */}
           <button
             className="hamburger"
-            aria-label="Menu"
+            aria-label="Open menu"
             aria-controls="mobile-drawer"
             aria-expanded={open ? "true" : "false"}
             onClick={toggle}
@@ -74,20 +70,28 @@ export default function Layout(){
         </div>
       </header>
 
-      <Ticker text={`${meta.title} • ${meta.subtitle}`} />
+      {/* headline ticker */}
+      <Ticker text={`${meta.title} — ${meta.subtitle}`} />
 
-      <main className="container" style={{ padding: "12px 0 20px" }}>
+      <main className="wrap">
         <Outlet />
       </main>
 
-      <footer className="footer">
+      {/* centered footer */}
+      <footer className="footer muted small">
         Model: Food-101 (Hugging Face) • React + Vite • v0.3
       </footer>
 
+      {/* Backdrop */}
       {open && <div className="drawer-backdrop" onClick={close} />}
 
-      {/* mobile drawer */}
-      <aside id="mobile-drawer" className={`drawer ${open ? "show" : ""}`} role="dialog" aria-modal="true">
+      {/* Mobile Drawer */}
+      <aside
+        id="mobile-drawer"
+        className={`drawer ${open ? "show" : ""}`}
+        role="dialog"
+        aria-modal="true"
+      >
         <div className="drawer-inner">
           <div className="drawer-header">
             <span className="brand">🍎 NutriVision</span>
