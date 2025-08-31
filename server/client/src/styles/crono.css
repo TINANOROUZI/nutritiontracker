@@ -257,6 +257,45 @@ header.nav .hamburger span + span{ margin-top:5px }
 }
 .btn-ghost{ background:transparent; border:1px solid #26345d }
 
+
+/* Devices page layout */
+.device-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:14px;
+}
+@media (max-width:900px){
+  .device-grid{ grid-template-columns:1fr; }
+}
+
+.device-card{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid #1f2d52;
+  background:#0f1524;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+  display:grid;
+  grid-template-rows:auto 1fr;
+}
+
+/* HERO image — explicitly NOT clickable */
+.device-hero{
+  height: 220px;
+  background:#10182e;
+}
+.device-hero img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  pointer-events: none;     /* <— prevents clicks on the image */
+  user-select: none;
+}
+
+.device-card .f-body{ padding:1rem; }
+.device-card .f-title{ font-weight:900; font-size:1.15rem; margin:0 0 .4rem; }
+.device-card .btn.btn-primary{ margin-top:4px; }
+
 /* ===================== EXERCISES ===================== */
 .ex-page{padding:1rem}
 .ex-hero{text-align:center;margin-bottom:.6rem}
