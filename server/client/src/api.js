@@ -1,13 +1,8 @@
 // src/api.js
 
 // --- Base URL to your server (Render) ---
-// Set VITE_API_URL in Netlify to your Render URL, e.g.:
-//   https://nutrition-tracker-t8be.onrender.com
-// We trim any trailing slash to avoid //api/...
-const API =
-  (import.meta.env?.VITE_API_URL
-    ? String(import.meta.env.VITE_API_URL).replace(/\/$/, "")
-    : "http://localhost:5001");
+// Hardcoded to your service; trailing slash trimmed.
+const API = "https://nutrition-tracker-t8be.onrender.com".replace(/\/$/, "");
 
 // --- helpers ---------------------------------------------------------------
 async function parseError(resp) {
@@ -115,5 +110,4 @@ export async function pingServer() {
   }
 }
 
-// expose for debugging in browser console
 export const API_BASE = API;
