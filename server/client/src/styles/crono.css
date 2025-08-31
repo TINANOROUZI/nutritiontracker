@@ -34,15 +34,16 @@ body{
 a{ color:inherit; text-decoration:none; }
 .container{ width:min(1200px,92%); margin-inline:auto; }
 
-/* ===================== NAV + DRAWER ===================== */
-
+/* NAV — static (not sticky) */
 header.nav{
-  position: sticky;
-  top: 0;
-  z-index: 70;
+  position: static;              /* <- was sticky */
+  top: auto;
+  z-index: 1;                    /* keep overlays sane */
   background: rgba(10,14,25,.6);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid #16223e;
+}
+
 }
 header.nav .nav-inner{
   max-width: 1200px;
