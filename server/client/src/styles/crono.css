@@ -100,3 +100,66 @@ a{color:inherit;text-decoration:none}
 .ex-sheet-img{height:240px;border-radius:12px;background-size:cover;background-position:center;margin-bottom:.7rem}
 .ex-sheet-sub{color:var(--muted);margin-bottom:.6rem}
 .ex-steps{margin-left:1.2rem;line-height:1.7}
+/* ---- ensure feature cards look and behave like cards/links ---- */
+.feature, .feature:link, .feature:visited {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: grid;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(20,20,30,.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 10px 40px rgba(0,0,0,.35);
+}
+
+.feature-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block: 24px 8px;
+}
+
+@media (max-width: 900px) {
+  .feature-grid { grid-template-columns: 1fr; }
+}
+
+.f-img {
+  aspect-ratio: 16/9;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05);
+}
+
+.f-body {
+  padding: 14px 16px 18px;
+}
+
+.f-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.btn,
+.btn-ghost,
+.btn-primary {
+  display: inline-block;
+  padding: .6rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+.btn-primary {
+  background: #1f62ff;
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #dbe2ff;
+}
+
+.chips .chip { text-decoration: none; }
+
