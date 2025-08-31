@@ -29,19 +29,22 @@ body{
 a{color:inherit;text-decoration:none}
 .container{width:min(1200px,92%);margin-inline:auto}
 
-/* ===================== NAVBAR ===================== */
+:1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.06);
 
-/* Bar */
+/* ===================== NAV + DRAWER (MOBILE FIRST) ===================== */
+
+/* bar */
 header.nav{
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
   background: rgba(10,14,25,.6);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid #16223e;
 }
 
-/* Inner row */
+/* row */
 header.nav .nav-inner{
   max-width: 1200px;
   margin: 0 auto;
@@ -51,18 +54,18 @@ header.nav .nav-inner{
   gap: 12px;
 }
 
-/* Brand */
+/* brand */
 .brand{
   display:flex;
   align-items:center;
-  gap:.55rem;
+  gap:.6rem;
   font-weight:900;
   font-size:1.15rem;
 }
 
-/* Desktop links (visible desktop, hidden mobile) */
+/* MOBILE-FIRST: hide link row by default */
 header.nav .links{
-  display:flex;
+  display:none !important;
   gap:12px;
   margin-left: 12px;
 }
@@ -70,113 +73,76 @@ header.nav .links a{
   padding:.45rem .7rem;
   border-radius:10px;
   color:#cfe1ff;
+  white-space:nowrap;
 }
 header.nav .links a:hover{ background:#15213d }
 
-/* Hamburger – hidden on desktop */
+/* hamburger visible by default (mobile) */
 header.nav .hamburger{
-  display:none;
-  border:0;
-  background:transparent;
-  padding:0;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  width:40px; height:40px;
+  margin-left:auto;                   /* push to right */
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
 }
-header.nav .hamburger span{ display:none }
+header.nav .hamburger span{
+  display:block;
+  width:22px; height:2px;
+  background:#eaf1ff;
+  border-radius:2px;
+}
+header.nav .hamburger span + span{ margin-top:5px }
 
-/* ===== Mobile rules (force collapse) ===== */
-@media (max-width: 1024px){
-  /* Always hide text links on mobile */
-  header.nav .links{ display:none !important; }
-
-  /* Show a proper touch target for the burger */
-  header.nav .hamburger{
-    display:inline-flex !important;
-    align-items:center;
-    justify-content:center;
-    width:40px; height:40px;
-    margin-left:auto;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.06);
-  }
-  header.nav .hamburger span{
-    display:block;
-    width:22px; height:2px;
-    background:#eaf1ff; border-radius:2px;
-  }
-  header.nav .hamburger span + span{ margin-top:5px }
+/* DESKTOP: show links, hide burger */
+@media (min-width: 1025px){
+  header.nav .links{ display:flex !important; }
+  header.nav .hamburger{ display:none !important; }
 }
 
-
-/* ===== Mobile navbar rules ===== */
-@media (max-width: 900px){
-  header.nav .links{ display:none }                  /* hide text links */
-  header.nav .hamburger{
-    display:inline-flex;                              /* show button */
-    align-items:center;
-    justify-content:center;
-    width:40px;height:40px;                           /* 40×40 touch target */
-    margin-left:auto;                                 /* stick to the right */
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.06);
-  }
-  header.nav .hamburger span{
-    display:block;
-    width:20px;height:2px;
-    background:#eaf1ff;border-radius:2px;
-  }
-  header.nav .hamburger span + span{ margin-top:5px }
-}
-
-/* ===================== DRAWER (mobile menu) ===================== */
+/* -------------- Drawer -------------- */
 .drawer-backdrop{
   position:fixed; inset:0;
   background:rgba(8,11,19,.55);
-  z-index:59;
-}
-.drawer{
-  position:fixed; inset:0;
-  pointer-events:none; opacity:0;
-  transition:opacity .18s ease-out;
   z-index:60;
 }
-.drawer.show{ pointer-events:auto; opacity:1 }
-.drawer .drawer-inner{
-  position:absolute; top:0; right:0; bottom:0;
-  width:min(84vw,340px);
-  background:#0e1527;
-  border-left:1px solid #1f2d52;
+.drawer{
+  position:fixed; inset:0 0 0 auto;
+  width:min(320px,85vw);
   transform:translateX(100%);
-  transition:transform .22s ease-out;
-  display:flex; flex-direction:column;
+  transition:transform .25s ease;
+  z-index:61;
 }
-.drawer.show .drawer-inner{ transform:translateX(0) }
+.drawer.show{ transform:translateX(0); }
+.drawer-inner{
+  height:100%;
+  background:#0e1527;
+  border-left:1px solid #1f2646;
+  padding:14px;
+  display:flex; flex-direction:column; gap:10px;
+}
 .drawer-header{
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 14px; border-bottom:1px solid #16223e;
 }
 .drawer-close{
-  background:transparent; border:0; color:var(--ink);
-  font-size:20px; line-height:1; padding:6px 8px; border-radius:8px;
+  border:0; background:#141c33; color:#dbe2ff;
+  width:36px;height:36px;border-radius:10px;
 }
-.drawer-links{ display:flex; flex-direction:column; padding:12px }
-.drawer-links a,.drawer-links .btn{
-  padding:.65rem .8rem; border-radius:10px;
+.drawer-links{
+  display:flex; flex-direction:column; gap:10px; margin-top:6px;
 }
-.drawer-links a:hover{ background:#15213d }
-
-/* ===================== TICKER ===================== */
-.ticker{ border-bottom:1px solid #16223e; }
-.ticker .inner{
-  max-width:1200px;margin:0 auto;padding:8px 16px;color:#a9b9dc;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+.drawer-links a, .drawer-links .btn{
+  padding:.65rem .8rem; border-radius:12px;
+  background:#101732; border:1px solid #1c2750; color:#cfe1ff;
 }
 
-/* ===================== FOOTER ===================== */
+/* footer centered (unchanged from before) */
 .footer{
-  margin-top:2rem; padding:1.2rem 0;
+  display:flex; justify-content:center; align-items:center;
   color:#a4b7d8; border-top:1px solid #16223e;
-  text-align:center;          /* center the note */
+  padding: 16px 0; margin-top: 24px;
 }
 
 /* ===================== HERO/FEATURES ===================== */
