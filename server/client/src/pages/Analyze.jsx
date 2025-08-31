@@ -1,4 +1,3 @@
-// server/client/src/pages/Analyze.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -137,8 +136,7 @@ export default function Analyze() {
             <div className="chips">
               {preds.map((p, i) => (
                 <div key={i} className="chip">
-                  {p.label}{" "}
-                  <span className="tag">{(p.score * 100).toFixed(1)}%</span>
+                  {p.label} <span className="tag">{(p.score * 100).toFixed(1)}%</span>
                 </div>
               ))}
             </div>
@@ -156,8 +154,7 @@ export default function Analyze() {
                   onClick={() => setSelected(s)}
                   title={s.rawLabel}
                 >
-                  {s.key}{" "}
-                  <span className="tag">{(s.score * 100).toFixed(0)}%</span>
+                  {s.key} <span className="tag">{(s.score * 100).toFixed(0)}%</span>
                 </button>
               ))}
             </div>
@@ -223,6 +220,8 @@ export default function Analyze() {
             value={height}
             onChange={(e) => setHeight(e.target.value)}
           />
+        </div>
+        <div className="bmi-io">
           <input
             placeholder="Weight (kg)"
             inputMode="numeric"
@@ -239,15 +238,11 @@ export default function Analyze() {
         </div>
       </section>
 
-      {/* ---------- Feature cards (clickable, with images) ---------- */}
+      {/* ---------- Feature cards (now clickable, with images) ---------- */}
       <div className="features">
         <div className="feature-grid">
-          {/* 1) Sync with your devices -> /devices */}
-          <Link
-            to="/devices"
-            className="feature pic-left"
-            aria-label="Sync with your devices"
-          >
+          {/* Sync with your devices -> /devices */}
+          <Link to="/devices" className="feature pic-left" aria-label="Sync with your devices">
             <div
               className="f-img"
               style={{
@@ -258,25 +253,21 @@ export default function Analyze() {
             <div className="f-body">
               <div className="f-title">Sync with your devices</div>
               <p>
-                Connect Apple Health® and Google Fit™ to automatically sync
-                steps, workouts, heart-rate and calories — so your nutrition
-                reflects your activity.
+                Connect Apple Health® and Google Fit™ to automatically sync steps,
+                workouts, heart-rate and calories — so your nutrition reflects your
+                activity.
               </p>
               <span className="btn btn-ghost">Learn more</span>
             </div>
           </Link>
 
-          {/* 2) Develop healthy habits -> /exercises (with photo) */}
-          <Link
-            to="/exercises"
-            className="feature pic-mid"
-            aria-label="Develop healthy habits"
-          >
+          {/* Develop healthy habits -> /exercises (with photo) */}
+          <Link to="/exercises" className="feature pic-mid" aria-label="Develop healthy habits">
             <div
               className="f-img"
               style={{
                 backgroundImage:
-                  "url(https://images.unsplash.com/photo-1546484959-f9a53db89f9f?q=80&w=1600&auto=format&fit=crop)",
+                  "url(https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80)", // ← new reliable image
               }}
             />
             <div className="f-body">
@@ -286,12 +277,8 @@ export default function Analyze() {
             </div>
           </Link>
 
-          {/* 3) Dial up your diet -> /history */}
-          <Link
-            to="/history"
-            className="feature pic-right"
-            aria-label="Dial up your diet"
-          >
+          {/* Dial up your diet -> /history */}
+          <Link to="/history" className="feature pic-right" aria-label="Dial up your diet">
             <div
               className="f-img"
               style={{
