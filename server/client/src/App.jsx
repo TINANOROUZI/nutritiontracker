@@ -1,4 +1,4 @@
-// src/App.jsx
+// server/client/src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import Analyze from "./pages/Analyze.jsx";
@@ -9,7 +9,6 @@ import Signup from "./pages/Signup.jsx";
 import Exercises from "./pages/Exercises.jsx";
 import Devices from "./pages/Devices.jsx";
 import { useAuth } from "./auth/AuthContext.jsx";
-import "./styles/crono.css"; // <-- IMPORTANT so the feature images/styles show
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -22,6 +21,8 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Analyze />} />
+        <Route path="/devices" element={<Devices />} />
+        <Route path="/exercises" element={<Exercises />} />
         <Route
           path="/history"
           element={
@@ -30,8 +31,6 @@ export default function App() {
             </Protected>
           }
         />
-        <Route path="/devices" element={<Devices />} />
-        <Route path="/exercises" element={<Exercises />} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
