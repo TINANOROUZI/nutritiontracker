@@ -219,8 +219,9 @@ export default function Analyze() {
             <div className="f-body">
               <div className="f-title">Sync with your devices</div>
               <p>
-                Connect Apple Health, Google Fit and more to see the full
-                picture.
+                Connect Apple Health® and Google Fit™ to automatically sync
+                steps, workouts, heart-rate and calories — so your nutrition
+                reflects your activity.
               </p>
               <span className="btn btn-ghost">Learn more</span>
             </div>
