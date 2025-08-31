@@ -1,66 +1,63 @@
-// src/components/BMIWidget.jsx
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function BMIWidget() {
-  const [height, setHeight] = useState(170); // cm
-  const [weight, setWeight] = useState(65);  // kg
+  const [height, setHeight] = useState(""); // cm
+  const [weight, setWeight] = useState(""); // kg
 
-  const { bmi, category } = useMemo(() => {
-    const h = Math.max(100, Math.min(230, Number(height) || 0));
-    const w = Math.max(30, Math.min(250, Number(weight) || 0));
-    const m = h / 100;
-    const b = +(w / (m * m)).toFixed(1);
-    let c = "Normal";
-    if (b < 18.5) c = "Underweight";
-    else if (b < 25) c = "Normal";
-    else if (b < 30) c = "Overweight";
-    else c = "Obese";
-    return { bmi: b, category: c };
+  const bmi = useMemo(() => {
+    const h = parseFloat(height);
+    const w = parseFloat(weight);
+    if (!h || !w) return null;
+    const v = w / ((h / 100) ** 2);
+    return Math.round(v * 10) / 10; // 1 decimal
   }, [height, weight]);
+
+  const label =
+    bmi == null
+      ? ""
+      : bmi < 18.5
+      ? "Underweight"
+      : bmi < 25
+      ? "Healthy"
+      : bmi < 30
+      ? "Overweight"
+      : "Obese";
+
+  const tip =
+    bmi == null
+      ? "BMI is a screening tool. Body composition and health markers matter most."
+      : label === "Healthy"
+      ? "Nice! Keep up consistent meals, protein, and daily movement."
+      : "Use BMI as a rough guide — focus on steady habits and nutrition.";
 
   return (
     <section className="card bmi-card">
       <h2 className="card-title">Quick BMI</h2>
 
-      <div className="bmi-row">
-        <label>
-          Height
-          <div className="bmi-input">
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              min={100}
-              max={230}
-            />
-            <span>cm</span>
-          </div>
-        </label>
-
-        <label>
-          Weight
-          <div className="bmi-input">
-            <input
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              min={30}
-              max={250}
-            />
-            <span>kg</span>
-          </div>
-        </label>
+      {/* The class names below are what crono.css expects */}
+      <div className="bmi-io">
+        <input
+          type="number"
+          inputMode="decimal"
+          placeholder="Height (cm)"
+          value={height}
+          onChange={(e) => setHeight(e.target.value)}
+        />
+        <input
+          type="number"
+          inputMode="decimal"
+          placeholder="Weight (kg)"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+        />
       </div>
 
-      <div className="bmi-result">
-        <div className="bmi-number">{bmi}</div>
-        <div className="bmi-cat">{category}</div>
+      <div className="bmi-value" aria-live="polite">
+        {bmi == null ? "--" : bmi}
       </div>
 
-      <p className="bmi-note">
-        BMI is a quick screening metric. Pair it with your meals & activity for
-        a fuller picture.
-      </p>
+      <div className="bmi-label">{label}</div>
+      <div className="bmi-tip">{tip}</div>
     </section>
   );
 }
