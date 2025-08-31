@@ -27,13 +27,13 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const HF_API_TOKEN = (process.env.HF_API_TOKEN || "").trim();
 const MODEL_ID = process.env.MODEL_ID || "nateraw/food";
 
-// Allowed origins: Netlify domain + localhost
+// Allow your Netlify + localhost
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
   "http://localhost:5173,http://127.0.0.1:5173")
   .split(",")
   .map((s) => s.trim());
 
-// Writable data dir for users.json (Render-safe)
+// Writable dir for users.json (Render-safe)
 const DATA_DIR =
   process.env.DATA_DIR ||
   (process.platform === "win32"
@@ -70,7 +70,8 @@ async function readUsers() {
   try {
     const raw = await fs.readFile(USERS_FILE, "utf8");
     return JSON.parse(raw || "[]");
-  } catch {
+  } catch (e) {
+    console.error("[readUsers] failed:", e);
     return [];
   }
 }
@@ -191,6 +192,37 @@ app.get("/api/nutrition", (req, res) => {
     carbs: +(base.carbs * f).toFixed(1),
     fat: +(base.fat * f).toFixed(1),
   });
+});
+
+// ---------- history (auth required; auto-create user if missing) ----------
+app.get("/api/history", requireAuth, async (req, res) => {
+  const users = await readUsers();
+  const user = users.find((u) => u.id === req.user.uid);
+  if (!user) return res.json([]); // empty after redeploy
+  res.json(user.history || []);
+});
+
+app.post("/api/history", requireAuth, async (req, res) => {
+  const entry = req.body || {};
+  const users = await readUsers();
+
+  let idx = users.findIndex((u) => u.id === req.user.uid);
+  if (idx === -1) {
+    // If the file was reset after a deploy, recreate a lightweight record
+    users.push({
+      id: req.user.uid,
+      email: (req.user.email || "").toLowerCase(),
+      name: req.user.name || "",
+      passHash: "", // unknown here; full record will be restored on next login
+      history: [],
+    });
+    idx = users.length - 1;
+  }
+
+  const e = { id: Date.now().toString(36), ...entry };
+  users[idx].history = [e, ...(users[idx].history || [])];
+  await writeUsers(users);
+  res.json(e);
 });
 
 // ---------- analyze (Hugging Face) ----------
