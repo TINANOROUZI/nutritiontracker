@@ -31,14 +31,41 @@ a:focus-visible{ outline:2px solid #6aa3ff; outline-offset:2px; }
 
 .container{ width:min(1200px,92%); margin-inline:auto; }
 
-/* ---------- Nav (if used) ---------- */
-.nav{ position:sticky; top:0; z-index:50; background:rgba(10,14,25,.6); backdrop-filter:blur(8px); border-bottom:1px solid #16223e; }
-.nav-row{ display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; }
-.brand{ display:flex; gap:.5rem; align-items:center; font-weight:800; }
-.brand-dot{ width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#ffd08a); }
-.nav-links{ display:flex; gap:.9rem; align-items:center; }
-.nav-links a{ padding:.45rem .7rem; border-radius:10px; color:#cfe1ff; }
-.nav-links a:hover{ background:#15213d; }
+/* --- NAVBAR (matches Layout.jsx) --- */
+.nav{position:sticky;top:0;z-index:50;background:rgba(10,14,25,.6);backdrop-filter:blur(8px);border-bottom:1px solid #16223e}
+.nav-row{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;margin-inline:auto;width:min(1200px,92%)}
+.brand{display:flex;gap:.5rem;align-items:center;font-weight:800}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ffd08a)}
+.nav-links{display:flex;align-items:center;gap:0.75rem}
+.nav-links a{padding:.45rem .7rem;border-radius:10px;color:#cfe1ff}
+.nav-links a:hover{background:#15213d}
+
+/* Hamburger (hidden on desktop) */
+.hamburger{display:none;background:transparent;border:0;width:40px;height:40px;padding:0}
+.hamburger span{display:block;width:22px;height:2px;background:#dbe2ff;margin:5px auto;border-radius:2px}
+
+/* Responsive: show hamburger, hide desktop links */
+@media (max-width: 860px){
+  .nav-links{display:none}
+  .hamburger{display:inline-flex;align-items:center;justify-content:center}
+}
+
+/* Main wrapper spacing so footer stays at bottom nicely */
+.wrap{width:min(1200px,92%);margin:12px auto}
+
+/* --- MOBILE DRAWER --- */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(8,11,19,.55);z-index:70}
+.drawer{position:fixed;inset:0;display:flex;pointer-events:none;opacity:0;transform:translateX(10px);transition:opacity .18s ease,transform .18s ease;z-index:80}
+.drawer.show{pointer-events:auto;opacity:1;transform:translateX(0)}
+.drawer-inner{margin-left:auto;width:300px;max-width:86vw;height:100%;background:#0e1527;border-left:1px solid var(--stroke);display:flex;flex-direction:column}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid #16223e}
+.drawer-close{background:#15213d;border:1px solid #26386a;color:#dbe2ff;border-radius:10px;padding:.35rem .6rem;cursor:pointer}
+.drawer-links a,.drawer-links button{display:block;text-align:left;padding:.9rem 1rem;border-bottom:1px solid #15213d;color:#cfe1ff}
+.drawer-links a:hover{background:#16254a}
+
+/* Footer already present in your file; just ensure margin-top isn’t absolute so it won’t overlap. */
+.footer{margin-top:2rem;padding:1.2rem 0;color:#a4b7d8;border-top:1px solid #16223e}
+
 
 /* ---------- Buttons ---------- */
 .btn{
