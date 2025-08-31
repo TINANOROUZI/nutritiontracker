@@ -23,8 +23,8 @@ export default function Layout(){
   const close = () => setOpen(false);
   const toggle = () => setOpen(v => !v);
 
-  useEffect(() => { close(); }, [pathname]);                 // close drawer on route change
-  useEffect(() => {                                          // ESC closes drawer
+  useEffect(() => { close(); }, [pathname]); // close drawer on route change
+  useEffect(() => {
     const onKey = e => e.key === "Escape" && close();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -35,20 +35,33 @@ export default function Layout(){
   return (
     <>
       <header className="nav">
-        <div className="nav-inner">
-          <div className="brand">NutriVision</div>
+        <div className="nav-row">
+          <div className="brand">🍎 NutriVision</div>
 
-          <nav className="links">
+          {/* desktop links (old, working class name) */}
+          <nav className="nav-links">
             <NavLink to="/" end>Home</NavLink>
+            {" "}
             <NavLink to="/devices">Devices</NavLink>
+            {" "}
             <NavLink to="/exercises">Exercises</NavLink>
+            {" "}
             <NavLink to="/history">History</NavLink>
+            {" "}
             <NavLink to="/about">About</NavLink>
+            {" "}
             {!user && <NavLink to="/login">Log in</NavLink>}
-            {user && <span className="muted small" style={{ marginLeft: 8 }}>Hi, {user.name || user.email}</span>}
-            {user && <button className="btn" style={{ marginLeft: 6 }} onClick={doLogout}>Logout</button>}
+            {user && (
+              <>
+                <span className="muted small" style={{ marginLeft: 12 }}>
+                  Hi, {user.name || user.email}
+                </span>
+                <button className="btn" style={{ marginLeft: 8 }} onClick={doLogout}>Logout</button>
+              </>
+            )}
           </nav>
 
+          {/* hamburger (only visible on mobile) */}
           <button
             className="hamburger"
             aria-label="Menu"
@@ -56,7 +69,7 @@ export default function Layout(){
             aria-expanded={open ? "true" : "false"}
             onClick={toggle}
           >
-            <span />
+            <span /><span /><span />
           </button>
         </div>
       </header>
@@ -73,6 +86,7 @@ export default function Layout(){
 
       {open && <div className="drawer-backdrop" onClick={close} />}
 
+      {/* mobile drawer */}
       <aside id="mobile-drawer" className={`drawer ${open ? "show" : ""}`} role="dialog" aria-modal="true">
         <div className="drawer-inner">
           <div className="drawer-header">
