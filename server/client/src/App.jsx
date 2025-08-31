@@ -1,5 +1,5 @@
 // server/client/src/App.jsx
-import "./styles/crono.css"; // <-- MAKE SURE THIS LINE EXISTS
+import "./styles/crono.css";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
@@ -9,6 +9,7 @@ import About from "./pages/About.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Exercises from "./pages/Exercises.jsx";
+import Devices from "./pages/Devices.jsx";   // <-- NEW
 import { useAuth } from "./auth/AuthContext.jsx";
 
 function Protected({ children }) {
@@ -22,6 +23,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Analyze />} />
+        <Route path="/devices" element={<Devices />} /> {/* <-- NEW */}
         <Route path="/exercises" element={<Exercises />} />
         <Route
           path="/history"
