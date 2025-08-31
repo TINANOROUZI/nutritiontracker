@@ -2,9 +2,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-// ✅ match your real filenames/locations
-import appleWatch from "../assets/devices/apple-watch.jpg";
-import googleFit from "../assets/devices/google-fit.jpg";
+// Build stable URLs for assets at build time (works reliably with Vite)
+const appleWatch = new URL("../assets/devices/apple-watch.jpg", import.meta.url)
+  .href;
+const googleFit = new URL("../assets/devices/google-fit.jpg", import.meta.url)
+  .href;
 
 export default function Devices() {
   return (
@@ -22,6 +24,7 @@ export default function Devices() {
             target="_blank"
             rel="noreferrer"
             aria-label="Open Apple Health information"
+            title="Open Apple Health"
           >
             <img
               src={appleWatch}
@@ -47,8 +50,8 @@ export default function Devices() {
               workouts.
             </li>
             <li>
-              In NutriVision, tap <strong>Connect Apple Health</strong> and allow
-              permissions.
+              In NutriVision, tap <strong>Connect Apple Health</strong> and
+              allow permissions.
             </li>
             <li>
               Return to the analyzer — your activity will inform estimates.
@@ -71,6 +74,7 @@ export default function Devices() {
             target="_blank"
             rel="noreferrer"
             aria-label="Open Google Fit information"
+            title="Open Google Fit"
           >
             <img
               src={googleFit}
