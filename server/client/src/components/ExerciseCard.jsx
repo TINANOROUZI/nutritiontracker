@@ -1,53 +1,44 @@
-// server/client/src/components/ExerciseCard.jsx
+// src/components/ExerciseCard.jsx
 import React from "react";
 
-const FALLBACKS = {
+// Nice, royalty-free Unsplash fallbacks by category
+const FALLBACK_IMG = {
   Cardio:
-    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1600&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1554311884-1736a2c08424?auto=format&fit=crop&w=1600&q=80",
   Strength:
-    "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&w=1600&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80",
   Core:
-    "https://images.unsplash.com/photo-1592432678016-e910b452f9a5?q=80&w=1600&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1596357395104-023321174449?auto=format&fit=crop&w=1600&q=80",
   Mobility:
-    "https://images.unsplash.com/photo-1540206276207-3af25c08abc8?q=80&w=1600&auto=format&fit=crop",
-  Default:
-    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1546484959-f9a53db89f9f?auto=format&fit=crop&w=1600&q=80",
 };
 
-function pickFallback(category) {
-  if (!category) return FALLBACKS.Default;
-  return FALLBACKS[category] || FALLBACKS.Default;
-}
+// Last-ditch generic photo if category is unknown
+const GENERIC_FALLBACK =
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1600&q=80";
 
 export default function ExerciseCard({ item, onClick }) {
   const img =
-    item?.image && item.image.trim().length > 0
-      ? item.image
-      : pickFallback(item?.category);
+    (item.image && item.image.trim()) ||
+    FALLBACK_IMG[item.category] ||
+    GENERIC_FALLBACK;
+
+  // Some datasets use different keys; normalize for safety
+  const equipment = item.equipment || item.tool || "Bodyweight";
 
   return (
-    <div
-      className="ex-card"
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick?.()}
-      aria-label={`${item?.name} details`}
-    >
-      {/* subtle top-to-bottom gradient over the image to avoid washed-out look */}
+    <article className="ex-card" onClick={onClick} role="button" tabIndex={0}>
       <div
         className="ex-thumb"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.25)), url(${img})`,
-        }}
+        aria-label={`${item.name} image`}
+        style={{ backgroundImage: `url(${img})` }}
       />
       <div className="ex-body">
-        <div className="ex-title">{item?.name || "Exercise"}</div>
+        <div className="ex-title">{item.name}</div>
         <div className="ex-meta">
-          {item?.category || "—"} • {item?.muscles || "—"}
-          {item?.equipment ? <> • {item.equipment}</> : null}
+          {item.category} • {item.muscles} • {equipment}
         </div>
       </div>
-    </div>
+    </article>
   );
 }
