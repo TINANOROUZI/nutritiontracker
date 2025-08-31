@@ -1,13 +1,15 @@
 // src/api.js
 
-// Base URL to your server (uses Netlify env if set, otherwise your Render URL)
-const API = (
-  import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL
-    : "https://nutrition-tracker-t8be.onrender.com"
-).replace(/\/$/, "");
+// --- Base URL to your server (Render) ---
+// Set VITE_API_URL in Netlify to your Render URL, e.g.:
+//   https://nutrition-tracker-t8be.onrender.com
+// We trim any trailing slash to avoid //api/...
+const API =
+  (import.meta.env?.VITE_API_URL
+    ? String(import.meta.env.VITE_API_URL).replace(/\/$/, "")
+    : "http://localhost:5001");
 
-// --- small helper to parse error messages from the server
+// --- helpers ---------------------------------------------------------------
 async function parseError(resp) {
   try {
     const data = await resp.json();
@@ -21,35 +23,33 @@ async function parseError(resp) {
   }
 }
 
-// --- generic request helper (JSON by default, with cookies)
 async function request(path, opts = {}) {
   const { json, ...rest } = opts;
   const init = {
-    credentials: "include", // send/receive cookies
-    headers: {},
+    method: "GET",
+    credentials: "include",        // send/receive auth cookie
+    headers: { Accept: "application/json" },
     ...rest,
   };
 
   if (json !== undefined) {
+    init.method = init.method || "POST";
     init.headers["Content-Type"] = "application/json";
     init.body = JSON.stringify(json);
   }
 
   const res = await fetch(`${API}${path}`, init);
-  if (!res.ok) {
-    throw new Error(await parseError(res));
-  }
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) return res.json();
+  if (!res.ok) throw new Error(await parseError(res));
+
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) return res.json();
   return res.text();
 }
 
-// =======================================================
-// ML
-// =======================================================
+// --- ML --------------------------------------------------------------------
 export async function analyzeImage(file) {
   const fd = new FormData();
-  fd.append("image", file);
+  fd.append("image", file); // browser sets the multipart boundary
   const res = await fetch(`${API}/api/analyze`, {
     method: "POST",
     body: fd,
@@ -60,22 +60,23 @@ export async function analyzeImage(file) {
 }
 
 export async function computeNutrition(foodKey, grams) {
-  const res = await fetch(
-    `${API}/api/nutrition?foodKey=${encodeURIComponent(foodKey)}&grams=${encodeURIComponent(grams)}`,
-    { credentials: "include" }
-  );
+  const url = `${API}/api/nutrition?foodKey=${encodeURIComponent(
+    foodKey
+  )}&grams=${encodeURIComponent(grams)}`;
+  const res = await fetch(url, { credentials: "include" });
   if (!res.ok) throw new Error(await parseError(res));
   return res.json();
 }
 
-// =======================================================
-// Auth
-// =======================================================
+// --- Auth ------------------------------------------------------------------
+// register({email, password, name}) OR register(email, password, name)
 export async function register(a, b, c) {
-  const payload = typeof a === "object" ? a : { email: a, password: b, name: c };
+  const payload =
+    typeof a === "object" ? a : { email: a, password: b, name: c };
   return request("/api/auth/register", { method: "POST", json: payload });
 }
 
+// login({email, password}) OR login(email, password)
 export async function login(a, b) {
   const payload = typeof a === "object" ? a : { email: a, password: b };
   return request("/api/auth/login", { method: "POST", json: payload });
@@ -93,9 +94,7 @@ export async function me() {
   }
 }
 
-// =======================================================
-// History (auth required)
-// =======================================================
+// --- History (requires login) ---------------------------------------------
 export async function saveHistory(entry) {
   return request("/api/history", { method: "POST", json: entry });
 }
@@ -103,3 +102,18 @@ export async function saveHistory(entry) {
 export async function getHistory() {
   return request("/api/history");
 }
+
+// (optional) quick health check to debug CORS/base URL issues
+export async function pingServer() {
+  try {
+    const res = await fetch(`${API}/api/nutrition?foodKey=pizza&grams=100`, {
+      credentials: "include",
+    });
+    return { ok: res.ok, status: res.status };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+// expose for debugging in browser console
+export const API_BASE = API;
