@@ -1,12 +1,11 @@
-// src/pages/Analyze.jsx
+// server/client/src/pages/Analyze.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { analyzeImage, computeNutrition, saveHistory } from "../api";
-import BMIWidget from "../components/BMIWidget.jsx";
 
 export default function Analyze() {
-  // -------- analyze state
+  // ---------- analyze state
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +20,21 @@ export default function Analyze() {
 
   const canAnalyze = useMemo(() => !!file && !loading, [file, loading]);
 
-  // -------- handlers
+  // ---------- BMI state
+  const [height, setHeight] = useState(""); // cm
+  const [weight, setWeight] = useState(""); // kg
+  const bmi =
+    height && weight ? +(weight / Math.pow(+height / 100, 2)).toFixed(1) : "";
+
+  function bmiMessage(v) {
+    if (!v) return "";
+    if (v < 18.5) return "Underweight";
+    if (v < 25) return "Healthy";
+    if (v < 30) return "Overweight";
+    return "Obese";
+  }
+
+  // ---------- handlers
   const onPick = (e) => {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -90,130 +103,145 @@ export default function Analyze() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
-      {/* ======= top grid: Analyzer + BMI ======= */}
-      <div className="top-grid">
-        {/* Analyze card */}
-        <section className="card qa-card">
-          <h2 className="card-title">Photo Analyzer</h2>
-          <div className="qa-top">
-            <label className="file">
-              <input type="file" accept="image/*" onChange={onPick} />
-              {file ? "Change Photo" : "Upload Meal Photo"}
-            </label>
-            <button
-              className="btn btn-primary"
-              disabled={!canAnalyze}
-              onClick={onAnalyze}
-            >
-              {loading ? "Analyzing…" : "Analyze Image"}
+      {/* ---------- Quick Analyze card ---------- */}
+      <section className="qa-card">
+        <div className="qa-top">
+          <label className="file">
+            <input type="file" accept="image/*" onChange={onPick} />
+            {file ? "Change Photo" : "Upload Meal Photo"}
+          </label>
+          <button
+            className="btn btn-primary"
+            disabled={!canAnalyze}
+            onClick={onAnalyze}
+          >
+            {loading ? "Analyzing…" : "Analyze Image"}
+          </button>
+        </div>
+
+        {preview && (
+          <div className="qa-preview">
+            <img src={preview} alt="preview" />
+          </div>
+        )}
+
+        {err && (
+          <div className="error" style={{ color: "#ff9c9c", marginTop: 6 }}>
+            {err}
+          </div>
+        )}
+
+        {!!preds.length && (
+          <div className="section">
+            <h3>Top predictions</h3>
+            <div className="chips">
+              {preds.map((p, i) => (
+                <div key={i} className="chip">
+                  {p.label} <span className="tag">{(p.score * 100).toFixed(1)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!!suggestions.length && (
+          <div className="section">
+            <h3>Pick the closest food</h3>
+            <div className="chips">
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  className={"chip " + (selected?.key === s.key ? "chip--on" : "")}
+                  onClick={() => setSelected(s)}
+                  title={s.rawLabel}
+                >
+                  {s.key} <span className="tag">{(s.score * 100).toFixed(0)}%</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selected && (
+          <div className="section">
+            <h3>Portion size</h3>
+            <div className="slider-row">
+              <input
+                type="range"
+                min="20"
+                max="600"
+                step="10"
+                value={grams}
+                onChange={(e) => setGrams(+e.target.value)}
+              />
+              <span>{grams} g</span>
+            </div>
+            <button className="btn" onClick={onCompute} disabled={loading}>
+              {loading ? "Calculating…" : "Compute Nutrition"}
             </button>
           </div>
+        )}
 
-          {preview && (
-            <div className="qa-preview">
-              <img src={preview} alt="preview" />
-            </div>
-          )}
-
-          {err && (
-            <div className="error" style={{ color: "#ff9c9c", marginTop: 6 }}>
-              {err}
-            </div>
-          )}
-
-          {!!preds.length && (
-            <div className="section">
-              <h3>Top predictions</h3>
-              <div className="chips">
-                {preds.map((p, i) => (
-                  <div key={i} className="chip">
-                    {p.label}{" "}
-                    <span className="tag">{(p.score * 100).toFixed(1)}%</span>
-                  </div>
-                ))}
+        {calc && (
+          <div className="section">
+            <h3>Estimated nutrition</h3>
+            <div className="metrics">
+              <div className="metric">
+                <div className="k">Calories</div>
+                <div className="v">{calc.kcal} kcal</div>
+              </div>
+              <div className="metric">
+                <div className="k">Protein</div>
+                <div className="v">{calc.protein} g</div>
+              </div>
+              <div className="metric">
+                <div className="k">Carbs</div>
+                <div className="v">{calc.carbs} g</div>
+              </div>
+              <div className="metric">
+                <div className="k">Fat</div>
+                <div className="v">{calc.fat} g</div>
               </div>
             </div>
-          )}
 
-          {!!suggestions.length && (
-            <div className="section">
-              <h3>Pick the closest food</h3>
-              <div className="chips">
-                {suggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    className={
-                      "chip " + (selected?.key === s.key ? "chip--on" : "")
-                    }
-                    onClick={() => setSelected(s)}
-                    title={s.rawLabel}
-                  >
-                    {s.key}{" "}
-                    <span className="tag">{(s.score * 100).toFixed(0)}%</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+            <button className="btn btn-primary" onClick={onSave}>
+              Save to History
+            </button>
+          </div>
+        )}
+      </section>
 
-          {selected && (
-            <div className="section">
-              <h3>Portion size</h3>
-              <div className="slider-row">
-                <input
-                  type="range"
-                  min="20"
-                  max="600"
-                  step="10"
-                  value={grams}
-                  onChange={(e) => setGrams(+e.target.value)}
-                />
-                <span>{grams} g</span>
-              </div>
-              <button className="btn" onClick={onCompute} disabled={loading}>
-                {loading ? "Calculating…" : "Compute Nutrition"}
-              </button>
-            </div>
-          )}
+      {/* ---------- BMI widget ---------- */}
+      <section className="bmi-card" style={{ marginTop: "12px" }}>
+        <h3 style={{ marginTop: 0 }}>Quick BMI</h3>
+        <div className="bmi-io">
+          <input
+            placeholder="Height (cm)"
+            inputMode="numeric"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+          />
+          <input
+            placeholder="Weight (kg)"
+            inputMode="numeric"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+          />
+        </div>
+        <div className="bmi-value" style={{ "--accent": "#60a5fa" }}>
+          {bmi || "--"}
+        </div>
+        <div className="bmi-label">{bmi ? bmiMessage(bmi) : "—"}</div>
+        <div className="bmi-tip">
+          BMI is a screening tool. Body composition and health markers matter most.
+        </div>
+      </section>
 
-          {calc && (
-            <div className="section">
-              <h3>Estimated nutrition</h3>
-              <div className="metrics">
-                <div className="metric">
-                  <div className="k">Calories</div>
-                  <div className="v">{calc.kcal} kcal</div>
-                </div>
-                <div className="metric">
-                  <div className="k">Protein</div>
-                  <div className="v">{calc.protein} g</div>
-                </div>
-                <div className="metric">
-                  <div className="k">Carbs</div>
-                  <div className="v">{calc.carbs} g</div>
-                </div>
-                <div className="metric">
-                  <div className="k">Fat</div>
-                  <div className="v">{calc.fat} g</div>
-                </div>
-              </div>
-
-              <button className="btn btn-primary" onClick={onSave}>
-                Save to History
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* BMI card */}
-        <BMIWidget />
-      </div>
-
-      {/* ======= Feature cards (CLICKABLE) ======= */}
+      {/* ---------- Feature cards (now clickable, with images) ---------- */}
       <div className="features">
         <div className="feature-grid">
-          {/* 1) Sync with your devices -> /devices */}
-          <Link to="/devices" className="feature pic-left" aria-label="Devices">
+          {/* Sync with your devices -> /devices */}
+          <Link to="/devices" className="feature pic-left" aria-label="Sync with your devices">
             <div
               className="f-img"
               style={{
@@ -224,20 +252,16 @@ export default function Analyze() {
             <div className="f-body">
               <div className="f-title">Sync with your devices</div>
               <p>
-                Connect Apple Health® and Google Fit™ to automatically sync
-                steps, workouts, heart-rate and calories so your nutrition
-                reflects your activity.
+                Connect Apple Health® and Google Fit™ to automatically sync steps,
+                workouts, heart-rate and calories — so your nutrition reflects your
+                activity.
               </p>
               <span className="btn btn-ghost">Learn more</span>
             </div>
           </Link>
 
-          {/* 2) Develop healthy habits -> /exercises */}
-          <Link
-            to="/exercises"
-            className="feature pic-mid"
-            aria-label="Exercises"
-          >
+          {/* Develop healthy habits -> /exercises (with photo) */}
+          <Link to="/exercises" className="feature pic-mid" aria-label="Develop healthy habits">
             <div
               className="f-img"
               style={{
@@ -252,8 +276,8 @@ export default function Analyze() {
             </div>
           </Link>
 
-          {/* 3) Dial up your diet -> /history */}
-          <Link to="/history" className="feature pic-right" aria-label="History">
+          {/* Dial up your diet -> /history */}
+          <Link to="/history" className="feature pic-right" aria-label="Dial up your diet">
             <div
               className="f-img"
               style={{
