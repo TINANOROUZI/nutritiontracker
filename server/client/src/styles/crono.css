@@ -1,7 +1,3 @@
-/* ======================================================================
-   server/client/src/styles/crono.css
-   ====================================================================== */
-
 :root{
   --bg:#0b0f17;
   --ink:#eaf1ff;
@@ -35,9 +31,9 @@ a{ color:inherit; text-decoration:none }
 
 /* ===================== NAV + DRAWER (MOBILE FIRST) ===================== */
 
-/* top bar (now static — DOES NOT follow scroll) */
+/* top bar (static — does not follow scroll) */
 header.nav{
-  position: static;                 /* << not sticky/fixed */
+  position: static;                 /* not sticky/fixed */
   top: auto;
   z-index: 50;
   background: rgba(10,14,25,.6);
@@ -276,9 +272,20 @@ header.nav .hamburger span + span{ margin-top:5px }
 .chip--cat.chip--on{background:#2c3f72}
 .ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:1rem}
 .ex-card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;overflow:hidden;text-align:left;cursor:pointer;box-shadow:var(--ring)}
-.ex-thumb{background-size:cover;background-position:center;height:160px}
-.ex-body{padding:.75rem .9rem}
-.ex-title{font-weight:900}
+.ex-thumb{
+  background-size:cover;
+  background-position:center;
+  height:160px;
+  background-color:#0b1222;           /* fallback color if image 404s */
+}
+.ex-body{
+  padding:.75rem .9rem;
+  color: var(--ink);                   /* ensure readable body text */
+}
+.ex-title{
+  font-weight:900;
+  color: var(--ink);                   /* ensure readable title */
+}
 .ex-meta{color:var(--muted);font-size:.92rem;display:flex;gap:.5rem;align-items:center}
 .ex-modal{position:fixed;inset:0;background:rgba(8,11,19,.55);display:grid;place-items:center;z-index:60}
 .ex-sheet{width:min(820px,94%);background:#0e1527;border:1px solid var(--stroke);border-radius:18px;padding:1rem 1.1rem;box-shadow:var(--ring)}
