@@ -137,7 +137,8 @@ export default function Analyze() {
             <div className="chips">
               {preds.map((p, i) => (
                 <div key={i} className="chip">
-                  {p.label} <span className="tag">{(p.score * 100).toFixed(1)}%</span>
+                  {p.label}{" "}
+                  <span className="tag">{(p.score * 100).toFixed(1)}%</span>
                 </div>
               ))}
             </div>
@@ -155,7 +156,8 @@ export default function Analyze() {
                   onClick={() => setSelected(s)}
                   title={s.rawLabel}
                 >
-                  {s.key} <span className="tag">{(s.score * 100).toFixed(0)}%</span>
+                  {s.key}{" "}
+                  <span className="tag">{(s.score * 100).toFixed(0)}%</span>
                 </button>
               ))}
             </div>
@@ -237,11 +239,15 @@ export default function Analyze() {
         </div>
       </section>
 
-      {/* ---------- Feature cards (now clickable, with images) ---------- */}
+      {/* ---------- Feature cards (clickable, with images) ---------- */}
       <div className="features">
         <div className="feature-grid">
-          {/* Sync with your devices -> /devices */}
-          <Link to="/devices" className="feature pic-left" aria-label="Sync with your devices">
+          {/* 1) Sync with your devices -> /devices */}
+          <Link
+            to="/devices"
+            className="feature pic-left"
+            aria-label="Sync with your devices"
+          >
             <div
               className="f-img"
               style={{
@@ -252,16 +258,20 @@ export default function Analyze() {
             <div className="f-body">
               <div className="f-title">Sync with your devices</div>
               <p>
-                Connect Apple Health® and Google Fit™ to automatically sync steps,
-                workouts, heart-rate and calories — so your nutrition reflects your
-                activity.
+                Connect Apple Health® and Google Fit™ to automatically sync
+                steps, workouts, heart-rate and calories — so your nutrition
+                reflects your activity.
               </p>
               <span className="btn btn-ghost">Learn more</span>
             </div>
           </Link>
 
-          {/* Develop healthy habits -> /exercises (with photo) */}
-          <Link to="/exercises" className="feature pic-mid" aria-label="Develop healthy habits">
+          {/* 2) Develop healthy habits -> /exercises (with photo) */}
+          <Link
+            to="/exercises"
+            className="feature pic-mid"
+            aria-label="Develop healthy habits"
+          >
             <div
               className="f-img"
               style={{
@@ -276,8 +286,12 @@ export default function Analyze() {
             </div>
           </Link>
 
-          {/* Dial up your diet -> /history */}
-          <Link to="/history" className="feature pic-right" aria-label="Dial up your diet">
+          {/* 3) Dial up your diet -> /history */}
+          <Link
+            to="/history"
+            className="feature pic-right"
+            aria-label="Dial up your diet"
+          >
             <div
               className="f-img"
               style={{
