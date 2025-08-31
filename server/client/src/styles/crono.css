@@ -257,44 +257,41 @@ header.nav .hamburger span + span{ margin-top:5px }
 }
 .btn-ghost{ background:transparent; border:1px solid #26345d }
 
-/* ===== EXERCISES ===== */
-.ex-card{
-  background: var(--card);
-  border: 1px solid var(--stroke);
-  border-radius: 16px;
-  overflow: hidden;
-  text-align: left;
-  cursor: pointer;
-  box-shadow: var(--ring);
+/* ===================== EXERCISES ===================== */
+.ex-page{padding:1rem}
+.ex-hero{text-align:center;margin-bottom:.6rem}
+.ex-hero h1{font-size:clamp(1.6rem,2.2vw,2.2rem)}
+.ex-hero p{color:var(--muted)}
+.ex-search{display:grid;gap:.7rem;justify-items:center;margin-top:.4rem}
+.ex-search input{
+  width:min(760px,92%);background:#0b1222;color:var(--ink);
+  border:1px solid var(--stroke);border-radius:14px;padding:.85rem 1rem;font-size:1rem
 }
-
-/* Photo area with gradient overlay for readability */
+.ex-cats{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.chip--cat{background:#1c2544;border:1px solid #26386a;color:#cfe1ff}
+.chip--cat.chip--on{background:#2c3f72}
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:1rem}
+.ex-card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;overflow:hidden;text-align:left;cursor:pointer;box-shadow:var(--ring)}
 .ex-thumb{
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  background-color: #0f1524; /* visible while image loads */
-  height: 180px;            /* was 160—slightly taller looks nicer */
+  background-size:cover;
+  background-position:center;
+  height:160px;
+  background-color:#0b1222;           /* fallback color if image 404s */
 }
-.ex-thumb::after{
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%);
+.ex-body{
+  padding:.75rem .9rem;
+  color: var(--ink);                   /* ensure readable body text */
 }
-
-.ex-body{ padding: .75rem .9rem; }
-
-/* Explicit, readable text colors */
 .ex-title{
-  font-weight: 900;
-  color: var(--ink);          /* ensure not black */
+  font-weight:900;
+  color: var(--ink);                   /* ensure readable title */
 }
-.ex-meta{
-  color: var(--muted);        /* softer, but readable */
-  font-size: .92rem;
-  display: flex; gap: .5rem; align-items: center;
-}
-
+.ex-meta{color:var(--muted);font-size:.92rem;display:flex;gap:.5rem;align-items:center}
+.ex-modal{position:fixed;inset:0;background:rgba(8,11,19,.55);display:grid;place-items:center;z-index:60}
+.ex-sheet{width:min(820px,94%);background:#0e1527;border:1px solid var(--stroke);border-radius:18px;padding:1rem 1.1rem;box-shadow:var(--ring)}
+.ex-sheet-img{height:240px;border-radius:12px;background-size:cover;background-position:center;margin-bottom:.7rem}
+.ex-sheet-sub{color:var(--muted);margin-bottom:.6rem}
+.ex-steps{margin-left:1.2rem;line-height:1.7}
 
 /* keep feature cards behaving like links/cards */
 .feature,.feature:link,.feature:visited{ text-decoration:none; color:inherit }
