@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  // Auto-close drawer when going to desktop width
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 1024 && open) setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [open]);
+
   return (
     <header className="nav">
       <div className="nav-inner">
-        {/* Left side: brand */}
+        {/* Left: brand */}
         <div className="brand">🍎 <strong>NutriVision</strong></div>
 
-        {/* Right side: links + hamburger (links hide on mobile) */}
+        {/* Right: links + hamburger */}
         <div className="nav-right">
           <nav className="links">
             <a href="#analyze">Analyze</a>
@@ -17,9 +26,9 @@ export default function Navbar() {
             <a href="#about">About</a>
           </nav>
 
-          {/* Three-line hamburger */}
+          {/* Three-line hamburger (mobile-only via CSS) */}
           <button
-            className={`hamburger-3 ${open ? "is-open" : ""}`}
+            className={`hamburger ${open ? "is-open" : ""}`}
             aria-label="Menu"
             aria-expanded={open}
             onClick={() => setOpen(v => !v)}
