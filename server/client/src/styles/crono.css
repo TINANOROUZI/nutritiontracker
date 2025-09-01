@@ -281,3 +281,39 @@ header.nav{
   position: static !important;  /* was: sticky */
   top: auto !important;
 }
+/* ===== Unify CTA buttons inside feature cards ===== */
+/* This makes ALL buttons inside .feature cards look the same */
+.feature .btn,
+.feature .btn-ghost,
+.feature .btn-primary {
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+
+  /* unified look (outlined ghost) */
+  background: transparent !important;
+  color: #cfe1ff !important;
+  border: 1px solid #33476f !important;
+  border-radius: 12px !important;
+  padding: .65rem .9rem !important;
+  font-weight: 800;
+
+  /* remove any leftover glow from .btn-primary */
+  box-shadow: none !important;
+}
+
+/* consistent hover/focus states */
+.feature .btn:hover,
+.feature .btn-ghost:hover,
+.feature .btn-primary:hover {
+  background: #15213d !important;
+  border-color: #3a5690 !important;
+}
+
+.feature .btn:focus-visible,
+.feature .btn-ghost:focus-visible,
+.feature .btn-primary:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
