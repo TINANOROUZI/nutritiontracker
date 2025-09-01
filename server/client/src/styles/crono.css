@@ -302,18 +302,57 @@ header.nav{
   box-shadow: none !important;
 }
 
-/* consistent hover/focus states */
-.feature .btn:hover,
-.feature .btn-ghost:hover,
-.feature .btn-primary:hover {
-  background: #15213d !important;
-  border-color: #3a5690 !important;
+/* === Unify CTA buttons inside feature cards (shape + color) === */
+.feature .f-body a,
+.feature .f-body button,
+.feature .f-body .btn,
+.feature .f-body .btn-ghost,
+.feature .f-body .btn-primary,
+.feature.pic-left .f-body a,
+.feature.pic-mid  .f-body a,
+.feature.pic-right .f-body a {
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+
+  /* same shape + sizing */
+  border-radius:12px !important;
+  padding:.65rem .9rem !important;
+
+  /* normalize visuals (outline style) */
+  background:transparent !important;
+  background-image:none !important;
+  color:#cfe1ff !important;
+  border:1px solid #33476f !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
 }
 
-.feature .btn:focus-visible,
-.feature .btn-ghost:focus-visible,
-.feature .btn-primary:focus-visible {
-  outline: 2px solid #60a5fa;
-  outline-offset: 2px;
+/* hover/focus/active – consistent for all three */
+.feature .f-body a:hover,
+.feature .f-body button:hover,
+.feature .f-body .btn:hover,
+.feature .f-body .btn-ghost:hover,
+.feature .f-body .btn-primary:hover {
+  background:#15213d !important;
+  border-color:#3a5690 !important;
 }
+
+.feature .f-body a:focus-visible,
+.feature .f-body button:focus-visible,
+.feature .f-body .btn:focus-visible,
+.feature .f-body .btn-ghost:focus-visible,
+.feature .f-body .btn-primary:focus-visible {
+  outline:2px solid #60a5fa !important;
+  outline-offset:2px;
+}
+
+.feature .f-body a:active,
+.feature .f-body button:active,
+.feature .f-body .btn:active,
+.feature .f-body .btn-ghost:active,
+.feature .f-body .btn-primary:active {
+  transform:translateY(1px);
+}
+
 
