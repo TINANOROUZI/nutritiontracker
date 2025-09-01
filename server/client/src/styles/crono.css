@@ -70,40 +70,37 @@ header.nav .links a:hover{ background:#15213d }
 /* ===================== HAMBURGER (minimal flat style) ===================== */
 .hamburger-min{
   display:inline-flex;
-  align-items:center;
+  flex-direction:column;
   justify-content:center;
-  width:40px; height:40px;
+  gap:5px;
+  width:40px;
+  height:40px;
   margin-left:auto;
   background:transparent;
   border:0;
   cursor:pointer;
-  position:relative;
 }
-.hamburger-min .bar,
-.hamburger-min .bar::before,
-.hamburger-min .bar::after{
-  content:"";
-  position:absolute;
-  left:50%;
-  width:22px; height:3px;
-  background:#9aa3ad;
+
+.hamburger-min span{
+  display:block;
+  width:22px;
+  height:3px;
+  background:#9aa3ad;   /* soft gray */
   border-radius:3px;
-  transform:translateX(-50%);
-  transition:transform .22s ease, opacity .22s ease, background .22s ease;
+  transition:transform .25s ease, opacity .25s ease;
 }
-.hamburger-min .bar{ top:50%; }
-.hamburger-min .bar::before{ top:-8px; }
-.hamburger-min .bar::after{  top: 8px; }
-.hamburger-min:hover .bar,
-.hamburger-min:hover .bar::before,
-.hamburger-min:hover .bar::after{ background:#b7c0c8; }
-.hamburger-min.is-open .bar{ opacity:0; }
-.hamburger-min.is-open .bar::before{
-  transform:translate(-50%,8px) rotate(45deg);
+
+/* Open state → transform into X */
+.hamburger-min.is-open span:nth-child(1){
+  transform:translateY(8px) rotate(45deg);
 }
-.hamburger-min.is-open .bar::after{
-  transform:translate(-50%,-8px) rotate(-45deg);
+.hamburger-min.is-open span:nth-child(2){
+  opacity:0;
 }
+.hamburger-min.is-open span:nth-child(3){
+  transform:translateY(-8px) rotate(-45deg);
+}
+
 
 /* ===================== Drawer ===================== */
 .drawer-backdrop{ position:fixed; inset:0; background:rgba(8,11,19,.55); z-index:60; }
