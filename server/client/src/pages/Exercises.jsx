@@ -40,6 +40,7 @@ const resolveImage = (x) => {
 function TipCard({ title, points }) {
   return (
     <div
+      className="tip"
       style={{
         background: "rgba(15,23,42,.96)",
         border: "1px solid rgba(255,255,255,.08)",
@@ -113,14 +114,7 @@ export default function Exercises() {
             outline: "none",
           }}
         />
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <div className="chips">
           {CATS.map((c) => (
             <button
               key={c}
@@ -142,22 +136,9 @@ export default function Exercises() {
       </div>
 
       {/* Two-column layout */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2.1fr 1fr",
-          gap: 22,
-        }}
-      >
+      <div className="ex-layout">
         {/* LEFT: exercises grid */}
-        <section
-          className="ex-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 18,
-          }}
-        >
+        <section className="ex-grid">
           {list.map((it) => (
             <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
           ))}
@@ -189,6 +170,7 @@ export default function Exercises() {
             ]}
           />
           <div
+            className="tip"
             style={{
               background: "rgba(15,23,42,.96)",
               border: "1px solid rgba(255,255,255,.08)",
@@ -240,7 +222,7 @@ export default function Exercises() {
                 boxShadow: "0 12px 48px rgba(0,0,0,.45)",
               }}
             >
-              <div style={{ height: 360, background: "#0b1220" }}>
+              <div className="ex-sheet-hero">
                 <img
                   src={resolveImage(active)}
                   alt={active.name}
