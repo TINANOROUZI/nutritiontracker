@@ -1,30 +1,30 @@
+// src/components/ExerciseCard.jsx
 import { motion } from "framer-motion";
 
-// Fallback libraries (used only when the main image is missing/broken)
+// Fallbacks only used when item.image is missing/broken
 const NAME_FALLBACKS = {
   "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
   "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
   "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
   "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
+  "Plank": "https://source.unsplash.com/1600x900/?plank,core,fitness",
+  "Jump Rope": "https://source.unsplash.com/1600x900/?jump,rope,cardio",
 };
+
 const CAT_FALLBACKS = {
   Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
   Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
-  Core: "https://source.unsplash.com/1600x900/?core,abs,plank",
+  Core: "https://source.unsplash.com/1600x900/?core,abs,workout",
   Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
 };
+
 const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
 
 export default function ExerciseCard({ item, onClick }) {
-  const primary = (item.image ?? "").trim();
-  const fallbacks = [
-    NAME_FALLBACKS[item.name],
-    CAT_FALLBACKS[item.category],
-    DEFAULT_IMG,
-  ].filter(Boolean);
+  const primary = ((item && item.image) || "").toString().trim();
 
-  // If the first URL fails to load, the next one is used automatically.
-  const bgLayers = [primary, ...fallbacks]
+  // Multiple backgrounds: if the first fails/empty, the next shows.
+  const bgLayers = [primary, NAME_FALLBACKS[item?.name], CAT_FALLBACKS[item?.category], DEFAULT_IMG]
     .filter(Boolean)
     .map((u) => `url("${u}")`)
     .join(", ");
