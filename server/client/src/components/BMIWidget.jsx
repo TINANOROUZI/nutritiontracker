@@ -1,126 +1,111 @@
-// src/components/BmiMini.jsx
 import { useMemo, useState } from "react";
 
 export default function BmiMini() {
   const [cm, setCm] = useState(165);
   const [kg, setKg] = useState(60);
 
-  const { bmi, cat, tip, pct, color } = useMemo(() => {
-    const h = Math.max(80, Math.min(240, Number(cm) || 0)) / 100;
-    const w = Math.max(20, Math.min(250, Number(kg) || 0));
-    const v = +(w / (h * h)).toFixed(1);
+  const data = useMemo(() => {
+    const h = Math.max(80, Math.min(240, +cm || 0)) / 100;
+    const w = Math.max(20, Math.min(250, +kg || 0));
+    const bmi = +(w / (h * h)).toFixed(1);
 
-    // WHO categories
-    let c = "Underweight", t = "Add balanced calories & strength work.", p = 8, col = "#60a5fa";
-    if (v >= 18.5 && v < 25) { c = "Normal"; t = "Great! Maintain with smart habits."; p = 35; col = "#22c55e"; }
-    else if (v >= 25 && v < 30) { c = "Overweight"; t = "Focus on small daily deficits + activity."; p = 60; col = "#f59e0b"; }
-    else if (v >= 30) { c = "Obesity"; t = "Prioritize nutrition quality & steady activity."; p = 85; col = "#ef4444"; }
+    let cat = "Underweight", color = "#60a5fa";
+    if (bmi >= 18.5 && bmi < 25) { cat = "Normal"; color = "#22c55e"; }
+    else if (bmi >= 25 && bmi < 30) { cat = "Overweight"; color = "#f59e0b"; }
+    else if (bmi >= 30) { cat = "Obesity"; color = "#ef4444"; }
 
-    // map bmi (15 → 0%, 40 → 100%)
-    const pctClip = Math.max(0, Math.min(100, Math.round(((v - 15) / 25) * 100)));
-    return { bmi: isFinite(v) ? v : 0, cat: c, tip: t, pct: pctClip, color: col };
+    // map BMI 15–40 → 0–100%
+    const pct = Math.max(0, Math.min(100, Math.round(((bmi - 15) / 25) * 100)));
+    return { bmi: isFinite(bmi) ? bmi : 0, cat, color, pct };
   }, [cm, kg]);
 
-  // scoped styles so nothing outside changes
-  const wrap = {
-    display: "grid",
-    gap: 12,
-    fontSize: 14,
+  // layout keeps to your card; internal styles only
+  const wrap = { display: "grid", gridTemplateColumns: "120px 1fr", gap: 14 };
+  const inputs = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
+  const label = { fontSize: 12, opacity: 0.8, marginBottom: 4 };
+  const input = {
+    width: "100%", padding: "10px 12px", borderRadius: 10,
+    border: "1px solid rgba(255,255,255,.12)", background: "rgba(15,23,42,.9)",
+    color: "white", outline: "none",
   };
-  const row = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
-  const lbl = { fontSize: 12, opacity: .85, marginBottom: 6 };
-  const inp = {
-    width: "100%",
-    padding: "10px 12px",
-    borderRadius: 10,
-    border: "1px solid rgba(255,255,255,.12)",
-    background: "rgba(15,23,42,.9)",
-    color: "white",
-    outline: "none",
-  };
-  const pill = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "10px 12px",
-    borderRadius: 999,
-    border: "1px solid rgba(255,255,255,.14)",
-    background: "rgba(0,0,0,.25)",
-    backdropFilter: "blur(4px)",
-  };
-  const score = { fontWeight: 800, fontSize: 20 };
-  const catChip = {
-    padding: "6px 10px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,.08)",
-    border: "1px solid rgba(255,255,255,.12)",
-    fontWeight: 600,
-  };
-  const barWrap = {
-    height: 10,
-    borderRadius: 999,
-    background: "rgba(255,255,255,.08)",
-    border: "1px solid rgba(255,255,255,.10)",
-    overflow: "hidden",
-  };
-  const bar = {
-    width: `${pct}%`,
-    height: "100%",
-    background: color,
-    transition: "width .25s ease",
-  };
-  const ranges = {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: 11,
-    opacity: .8,
-  };
+
+  // circle gauge
+  const size = 120, stroke = 10;
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
+  const dash = (data.pct / 100) * C;
 
   return (
-    <div className="bmi-mini" style={wrap}>
-      {/* Inputs */}
-      <div style={row}>
-        <label>
-          <div style={lbl}>Height (cm)</div>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={80}
-            max={240}
-            value={cm}
-            onChange={(e) => setCm(e.target.value)}
-            style={inp}
+    <div style={wrap}>
+
+      {/* Circular gauge */}
+      <div style={{ placeSelf: "center" }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <defs>
+            <linearGradient id="bmiGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="rgba(255,255,255,.15)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,.05)" />
+            </linearGradient>
+          </defs>
+
+          {/* track */}
+          <circle
+            cx={size/2} cy={size/2} r={r}
+            stroke="rgba(255,255,255,.12)" strokeWidth={stroke}
+            fill="none"
           />
-        </label>
-        <label>
-          <div style={lbl}>Weight (kg)</div>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={20}
-            max={250}
-            value={kg}
-            onChange={(e) => setKg(e.target.value)}
-            style={inp}
+          {/* progress */}
+          <circle
+            cx={size/2} cy={size/2} r={r}
+            stroke={data.color} strokeWidth={stroke}
+            fill="none" strokeLinecap="round"
+            strokeDasharray={`${dash} ${C - dash}`}
+            transform={`rotate(-90 ${size/2} ${size/2})`}
           />
-        </label>
+          {/* center value */}
+          <g>
+            <text x="50%" y="46%" dominantBaseline="middle" textAnchor="middle"
+                  style={{ fill: "#fff", fontWeight: 800, fontSize: 22 }}>
+              {data.bmi}
+            </text>
+            <text x="50%" y="62%" dominantBaseline="middle" textAnchor="middle"
+                  style={{ fill: "rgba(255,255,255,.75)", fontSize: 12 }}>
+              BMI
+            </text>
+          </g>
+        </svg>
       </div>
 
-      {/* Result pill */}
-      <div style={pill}>
-        <span style={score}>{bmi}</span>
-        <span style={{ opacity: .8 }}>BMI</span>
-        <span style={catChip}>{cat}</span>
-      </div>
+      {/* Controls + result */}
+      <div style={{ display: "grid", gap: 10 }}>
+        <div style={inputs}>
+          <label>
+            <div style={label}>Height (cm)</div>
+            <input type="number" min={80} max={240} value={cm}
+                   onChange={(e) => setCm(e.target.value)} style={input} />
+          </label>
+          <label>
+            <div style={label}>Weight (kg)</div>
+            <input type="number" min={20} max={250} value={kg}
+                   onChange={(e) => setKg(e.target.value)} style={input} />
+          </label>
+        </div>
 
-      {/* Gauge */}
-      <div style={barWrap}><div style={bar} /></div>
-      <div style={ranges}>
-        <span>15</span><span>20</span><span>25</span><span>30</span><span>35</span><span>40</span>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap"
+        }}>
+          <span style={{
+            padding: "6px 10px", borderRadius: 999,
+            border: "1px solid rgba(255,255,255,.14)",
+            background: "rgba(255,255,255,.06)", fontWeight: 600
+          }}>
+            {data.cat}
+          </span>
+          <div style={{ fontSize: 12, opacity: .85 }}>
+            15 ← under • 18.5 • 25 • 30 • 40 →
+          </div>
+        </div>
       </div>
-
-      {/* Tip */}
-      <div style={{ fontSize: 12, opacity: .9 }}>{tip}</div>
     </div>
   );
 }
