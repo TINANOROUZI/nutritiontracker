@@ -5,37 +5,53 @@ import { EXERCISES } from "../data/exercises";
 
 const CATS = ["All", "Cardio", "Strength", "Core", "Mobility"];
 
-// same resolver for the modal (uses your local files or a safe placeholder)
+// Map exercise names → local images
 const LOCAL_BY_NAME = {
-  "push-ups": "/assets/exercises/pushups.jpg",
+  "push up": "/assets/exercises/pushups.jpg",
   "rowing machine": "/assets/exercises/rowing.jpg",
   "dead bug": "/assets/exercises/deadbug.jpg",
-  "russian twists": "/assets/exercises/russian-twists.jpg",
-  "goblet squats": "/assets/exercises/goblet-squats.jpg",
+  "russian twist": "/assets/exercises/russian-twists.jpg",
+  "goblet squat": "/assets/exercises/goblet-squats.jpg",
   "plank": "/assets/exercises/plank.jpg",
   "jump rope": "/assets/exercises/jump-rope.jpg",
   "yoga flow": "/assets/exercises/yoga-flow.jpg",
   "indoor cycling": "/assets/exercises/indoor-cycling.jpg",
 };
+
 const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='675'><rect width='100%' height='100%' fill='#0b1220'/></svg>`
 )}`;
-const resolveImage = (x) =>
-  (x?.image || "").trim() ||
-  LOCAL_BY_NAME[(x?.name || "").toLowerCase().trim()] ||
-  PLACEHOLDER;
+
+const norm = (s) =>
+  (s || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/s\b/, "");
+
+// ✅ local first → external → placeholder
+const resolveImage = (x) => {
+  const k = norm(x?.name);
+  if (LOCAL_BY_NAME[k]) return LOCAL_BY_NAME[k];
+  const orig = (x?.image || "").trim();
+  return orig || PLACEHOLDER;
+};
 
 function TipCard({ title, points }) {
   return (
-    <div style={{
-      background: "rgba(15,23,42,.96)",
-      border: "1px solid rgba(255,255,255,.08)",
-      borderRadius: 14,
-      padding: 14
-    }}>
+    <div
+      style={{
+        background: "rgba(15,23,42,.96)",
+        border: "1px solid rgba(255,255,255,.08)",
+        borderRadius: 14,
+        padding: 14,
+      }}
+    >
       <h4 style={{ margin: "0 0 8px" }}>{title}</h4>
-      <ul style={{ margin: 0, paddingLeft: 18, opacity: .9 }}>
-        {points.map((p, i) => <li key={i}>{p}</li>)}
+      <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
+        {points.map((p, i) => (
+          <li key={i}>{p}</li>
+        ))}
       </ul>
     </div>
   );
@@ -48,20 +64,25 @@ export default function Exercises() {
 
   const list = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return EXERCISES.filter((x) =>
-      (cat === "All" || x.category === cat) &&
-      (!term ||
-        x.name.toLowerCase().includes(term) ||
-        x.muscles.toLowerCase().includes(term) ||
-        x.equipment.toLowerCase().includes(term))
+    return EXERCISES.filter(
+      (x) =>
+        (cat === "All" || x.category === cat) &&
+        (!term ||
+          x.name.toLowerCase().includes(term) ||
+          x.muscles.toLowerCase().includes(term) ||
+          x.equipment.toLowerCase().includes(term))
     );
   }, [q, cat]);
 
-  // --- NEW PAGE LAYOUT (EatRight-style: hero + two columns) ---
   return (
-    // keeps your site background; container only changes spacing
-    <div className="ex-page" style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px 80px" }}>
-      <header className="ex-hero" style={{ textAlign: "center", marginBottom: 24 }}>
+    <div
+      className="ex-page"
+      style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px 80px" }}
+    >
+      <header
+        className="ex-hero"
+        style={{ textAlign: "center", marginBottom: 24 }}
+      >
         <h1 style={{ margin: 0, fontSize: 30 }}>Exercise & Nutrition</h1>
         <p style={{ opacity: 0.8, marginTop: 8 }}>
           Fuel smart. Move better. Recover well.
@@ -69,7 +90,14 @@ export default function Exercises() {
       </header>
 
       {/* search + filters */}
-      <div style={{ display: "grid", gap: 16, justifyItems: "center", marginBottom: 12 }}>
+      <div
+        style={{
+          display: "grid",
+          gap: 16,
+          justifyItems: "center",
+          marginBottom: 12,
+        }}
+      >
         <input
           placeholder="Search: squat, cardio, dumbbell…"
           value={q}
@@ -85,7 +113,14 @@ export default function Exercises() {
             outline: "none",
           }}
         />
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
           {CATS.map((c) => (
             <button
               key={c}
@@ -106,12 +141,14 @@ export default function Exercises() {
         </div>
       </div>
 
-      {/* Two-column content: left = exercises grid, right = nutrition sidebar */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "2.1fr 1fr",
-        gap: 22,
-      }}>
+      {/* Two-column layout */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2.1fr 1fr",
+          gap: 22,
+        }}
+      >
         {/* LEFT: exercises grid */}
         <section
           className="ex-grid"
@@ -126,7 +163,7 @@ export default function Exercises() {
           ))}
         </section>
 
-        {/* RIGHT: nutrition/tips sidebar (like EatRight) */}
+        {/* RIGHT: nutrition/tips */}
         <aside style={{ display: "grid", gap: 14, alignContent: "start" }}>
           <TipCard
             title="Before your workout"
@@ -151,14 +188,16 @@ export default function Exercises() {
               "Prioritize sleep for recovery.",
             ]}
           />
-          <div style={{
-            background: "rgba(15,23,42,.96)",
-            border: "1px solid rgba(255,255,255,.08)",
-            borderRadius: 14,
-            padding: 14
-          }}>
+          <div
+            style={{
+              background: "rgba(15,23,42,.96)",
+              border: "1px solid rgba(255,255,255,.08)",
+              borderRadius: 14,
+              padding: 14,
+            }}
+          >
             <h4 style={{ marginTop: 0 }}>Quick snack ideas</h4>
-            <ul style={{ margin: 0, paddingLeft: 18, opacity: .9 }}>
+            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
               <li>Greek yogurt + fruit</li>
               <li>Banana + peanut butter</li>
               <li>Tuna on whole-grain toast</li>
@@ -178,8 +217,12 @@ export default function Exercises() {
             exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
             style={{
-              position: "fixed", inset: 0, background: "rgba(0,0,0,.6)",
-              display: "grid", placeItems: "center", zIndex: 50,
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,.6)",
+              display: "grid",
+              placeItems: "center",
+              zIndex: 50,
             }}
           >
             <motion.div
@@ -203,24 +246,42 @@ export default function Exercises() {
                   alt={active.name}
                   onError={(e) => (e.currentTarget.src = PLACEHOLDER)}
                   loading="eager"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
                 />
               </div>
               <div style={{ padding: 18 }}>
                 <h3 style={{ margin: "6px 0 8px" }}>{active.name}</h3>
-                <p className="ex-sheet-sub" style={{ opacity: 0.85, marginTop: 0 }}>
-                  {active.category} • {active.muscles} • {active.equipment} • {active.difficulty}
+                <p
+                  className="ex-sheet-sub"
+                  style={{ opacity: 0.85, marginTop: 0 }}
+                >
+                  {active.category} • {active.muscles} • {active.equipment} •{" "}
+                  {active.difficulty}
                 </p>
-                <ol className="ex-steps" style={{ paddingLeft: 18, marginTop: 12 }}>
-                  {active.how.map((step, i) => <li key={i}>{step}</li>)}
+                <ol
+                  className="ex-steps"
+                  style={{ paddingLeft: 18, marginTop: 12 }}
+                >
+                  {active.how.map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
                 </ol>
                 <button
                   className="btn-primary"
                   onClick={() => setActive(null)}
                   style={{
-                    marginTop: 16, padding: "10px 14px", borderRadius: 10,
-                    border: "1px solid rgba(255,255,255,.14)", background: "#1f2937",
-                    color: "white", cursor: "pointer",
+                    marginTop: 16,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    border: "1px solid rgba(255,255,255,.14)",
+                    background: "#1f2937",
+                    color: "white",
+                    cursor: "pointer",
                   }}
                 >
                   Close
