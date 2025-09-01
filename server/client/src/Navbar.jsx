@@ -6,29 +6,32 @@ export default function Navbar() {
   return (
     <header className="nav">
       <div className="nav-inner">
+        {/* Left side: brand */}
         <div className="brand">🍎 <strong>NutriVision</strong></div>
 
-        {/* Desktop links */}
-        <nav className="links">
-          <a href="#analyze">Analyze</a>
-          <a href="#history">History</a>
-          <a href="#about">About</a>
-        </nav>
+        {/* Right side: links + hamburger (links hide on mobile) */}
+        <div className="nav-right">
+          <nav className="links">
+            <a href="#analyze">Analyze</a>
+            <a href="#history">History</a>
+            <a href="#about">About</a>
+          </nav>
 
-        {/* Three-line hamburger (right aligned) */}
-        <button
-          className={`hamburger-3 ${open ? "is-open" : ""}`}
-          aria-label="Menu"
-          aria-expanded={open}
-          onClick={() => setOpen(v => !v)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+          {/* Three-line hamburger */}
+          <button
+            className={`hamburger-3 ${open ? "is-open" : ""}`}
+            aria-label="Menu"
+            aria-expanded={open}
+            onClick={() => setOpen(v => !v)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile drawer (optional) */}
+      {/* Mobile drawer */}
       {open && (
         <>
           <div className="drawer-backdrop" onClick={() => setOpen(false)} />
