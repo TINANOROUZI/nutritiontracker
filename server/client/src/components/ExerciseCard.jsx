@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
-// Map exercise names → your local files (keys are lowercase)
+// Map exercise names → your local files
 const LOCAL_BY_NAME = {
-  "push-ups": "/assets/exercises/pushups.jpg",
+  "push up": "/assets/exercises/pushups.jpg",
   "rowing machine": "/assets/exercises/rowing.jpg",
   "dead bug": "/assets/exercises/deadbug.jpg",
-  "russian twists": "/assets/exercises/russian-twists.jpg",
-  "goblet squats": "/assets/exercises/goblet-squats.jpg",
+  "russian twist": "/assets/exercises/russian-twists.jpg",
+  "goblet squat": "/assets/exercises/goblet-squats.jpg",
   "plank": "/assets/exercises/plank.jpg",
   "jump rope": "/assets/exercises/jump-rope.jpg",
   "yoga flow": "/assets/exercises/yoga-flow.jpg",
@@ -24,18 +24,25 @@ const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
    </svg>`
 )}`;
 
+// normalize: lower, strip symbols, singularize trailing "s"
+const norm = (s) =>
+  (s || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/s\b/, "");
+
 function pickSrc(item) {
+  const key = norm(item?.name);
+  if (LOCAL_BY_NAME[key]) return LOCAL_BY_NAME[key]; // ✅ local first
   const orig = (item?.image || "").trim();
-  if (orig) return orig;
-  const key = (item?.name || "").toLowerCase().trim();
-  return LOCAL_BY_NAME[key] || PLACEHOLDER;
+  return orig || PLACEHOLDER;
 }
 
 export default function ExerciseCard({ item, onClick }) {
   const initial = useMemo(() => pickSrc(item), [item]);
   const [src, setSrc] = useState(initial);
 
-  // NEW visual (keeps your background; only the card styling changes)
   return (
     <motion.button
       className="ex-card"
@@ -76,7 +83,10 @@ export default function ExerciseCard({ item, onClick }) {
       </figure>
 
       <div style={{ padding: "12px 8px 6px" }}>
-        <div className="ex-title" style={{ fontWeight: 700, fontSize: 18, marginBottom: 6 }}>
+        <div
+          className="ex-title"
+          style={{ fontWeight: 700, fontSize: 18, marginBottom: 6 }}
+        >
           {item.name}
         </div>
         <div className="ex-meta" style={{ opacity: 0.8 }}>
