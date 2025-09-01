@@ -1,6 +1,30 @@
+// src/components/ExerciseCard.jsx
 import { motion } from "framer-motion";
 
+// Fallbacks for items missing `image`
+const NAME_FALLBACKS = {
+  "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
+  "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
+  "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
+  "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
+};
+
+const CAT_FALLBACKS = {
+  Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
+  Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
+  Core: "https://source.unsplash.com/1600x900/?core,abs,plank",
+  Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
+};
+
+const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
+
 export default function ExerciseCard({ item, onClick }) {
+  const bg =
+    (item.image && String(item.image).trim()) ||
+    NAME_FALLBACKS[item.name] ||
+    CAT_FALLBACKS[item.category] ||
+    DEFAULT_IMG;
+
   return (
     <motion.button
       className="ex-card"
@@ -9,7 +33,7 @@ export default function ExerciseCard({ item, onClick }) {
       whileHover={{ scale: 1.015 }}
       onClick={onClick}
     >
-      <div className="ex-thumb" style={{ backgroundImage: `url(${item.image})` }} />
+      <div className="ex-thumb" style={{ backgroundImage: `url(${bg})` }} />
       <div className="ex-body">
         <div className="ex-title">{item.name}</div>
         <div className="ex-meta">
