@@ -1,33 +1,33 @@
-// src/components/ExerciseCard.jsx
 import { motion } from "framer-motion";
 
-// Fallbacks only used when item.image is missing/broken
-const NAME_FALLBACKS = {
-  "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
-  "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
-  "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
-  "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
-  "Plank": "https://source.unsplash.com/1600x900/?plank,core,fitness",
-  "Jump Rope": "https://source.unsplash.com/1600x900/?jump,rope,cardio",
+// map exercise names (lowercase) -> your local files
+const LOCAL_BY_NAME = {
+  "push-ups": "/assets/exercises/pushups.jpg",
+  "rowing machine": "/assets/exercises/rowing.jpg",
+  "dead bug": "/assets/exercises/deadbug.jpg",
+  "russian twists": "/assets/exercises/russian-twists.jpg",
 };
 
-const CAT_FALLBACKS = {
-  Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
-  Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
-  Core: "https://source.unsplash.com/1600x900/?core,abs,workout",
-  Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
-};
+// minimal inline placeholder (never blank)
+const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
+    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+      <stop stop-color='#111827' offset='0'/><stop stop-color='#0b1220' offset='1'/>
+    </linearGradient></defs>
+    <rect width='100%' height='100%' fill='url(#g)'/>
+    <text x='50%' y='58%' font-family='Inter,Segoe UI,Arial' font-size='120' fill='rgba(255,255,255,.92)' text-anchor='middle' font-weight='700'>Workout</text>
+  </svg>`
+)}`;
 
-const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
+function resolveImage(item) {
+  const orig = (item?.image || "").trim();
+  if (orig) return orig;
+  const key = (item?.name || "").toLowerCase().trim();
+  return LOCAL_BY_NAME[key] || PLACEHOLDER;
+}
 
 export default function ExerciseCard({ item, onClick }) {
-  const primary = ((item && item.image) || "").toString().trim();
-
-  // Multiple backgrounds: if the first fails/empty, the next shows.
-  const bgLayers = [primary, NAME_FALLBACKS[item?.name], CAT_FALLBACKS[item?.category], DEFAULT_IMG]
-    .filter(Boolean)
-    .map((u) => `url("${u}")`)
-    .join(", ");
+  const img = resolveImage(item);
 
   return (
     <motion.button
@@ -37,7 +37,7 @@ export default function ExerciseCard({ item, onClick }) {
       whileHover={{ scale: 1.015 }}
       onClick={onClick}
     >
-      <div className="ex-thumb" style={{ backgroundImage: bgLayers }} />
+      <div className="ex-thumb" style={{ backgroundImage: `url(${img})` }} />
       <div className="ex-body">
         <div className="ex-title">{item.name}</div>
         <div className="ex-meta">
