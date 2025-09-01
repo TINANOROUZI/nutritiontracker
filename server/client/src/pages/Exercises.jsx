@@ -6,6 +6,30 @@ import { EXERCISES } from "../data/exercises";
 
 const CATS = ["All", "Cardio", "Strength", "Core", "Mobility"];
 
+// --- added: fallback images (used ONLY if item.image is empty/missing) ---
+const NAME_FALLBACKS = {
+  "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
+  "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
+  "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
+  "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
+  "Plank": "https://source.unsplash.com/1600x900/?plank,core,fitness",
+  "Russian Twists": "https://source.unsplash.com/1600x900/?russian,twist,abs",
+};
+const CAT_FALLBACKS = {
+  Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
+  Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
+  Core: "https://source.unsplash.com/1600x900/?core,abs,workout",
+  Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
+};
+const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
+
+function pickImage(x) {
+  const img = (x.image || "").trim();
+  if (img) return img; // keep your original if present
+  return NAME_FALLBACKS[x.name] || CAT_FALLBACKS[x.category] || DEFAULT_IMG;
+}
+// -----------------------------------------------------------------------
+
 export default function Exercises() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
@@ -21,35 +45,6 @@ export default function Exercises() {
         x.equipment.toLowerCase().includes(term))
     );
   }, [q, cat]);
-
-  // ---- Added only for images (modal fallback) ----
-  const NAME_FALLBACKS = {
-    "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
-    "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
-    "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
-    "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
-  };
-  const CAT_FALLBACKS = {
-    Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
-    Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
-    Core: "https://source.unsplash.com/1600x900/?core,abs,plank",
-    Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
-  };
-  const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
-
-  const modalBg =
-    active
-      ? [
-          (active.image ?? "").trim(),
-          NAME_FALLBACKS[active.name],
-          CAT_FALLBACKS[active.category],
-          DEFAULT_IMG,
-        ]
-          .filter(Boolean)
-          .map((u) => `url("${u}")`)
-          .join(", ")
-      : undefined;
-  // ------------------------------------------------
 
   return (
     <div className="ex-page">
@@ -78,9 +73,16 @@ export default function Exercises() {
       </header>
 
       <section className="ex-grid">
-        {list.map((it) => (
-          <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
-        ))}
+        {list.map((it) => {
+          const withImg = { ...it, image: pickImage(it) }; // <-- only addition
+          return (
+            <ExerciseCard
+              key={it.id}
+              item={withImg}
+              onClick={() => setActive(withImg)}
+            />
+          );
+        })}
       </section>
 
       <AnimatePresence>
@@ -101,7 +103,7 @@ export default function Exercises() {
             >
               <div
                 className="ex-sheet-img"
-                style={{ backgroundImage: modalBg }}
+                style={{ backgroundImage: `url(${pickImage(active)})` }} // uses same fallback
               />
               <h3>{active.name}</h3>
               <p className="ex-sheet-sub">
