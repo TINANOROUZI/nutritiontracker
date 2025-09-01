@@ -272,6 +272,7 @@ header.nav .hamburger span + span{ margin-top:5px }
   place-items:center;
   padding: 24px 10px;
 }
+
 .about-card{
   width:min(960px, 94%);
   background: linear-gradient(180deg,#131a2b,#0f1524);
@@ -280,17 +281,34 @@ header.nav .hamburger span + span{ margin-top:5px }
   box-shadow: var(--ring);
   padding: clamp(18px, 2.5vw, 28px);
 }
-.about-title{ margin:0; font-size: clamp(1.6rem, 2.6vw, 2rem); font-weight:900; }
-.about-lead{ margin:.5rem 0 1rem; color: var(--ink); font-size:1rem; }
+
+.about-title{
+  margin:0;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight:900;
+}
+
+.about-kicker{ color: var(--muted); margin:.25rem 0 0.75rem; }
+
+.about-lead{
+  margin:.25rem 0 1rem;
+  color: var(--ink);
+  line-height:1.7;
+}
+
 .list{ margin:.2rem 0 1rem; padding-left:1.2rem; }
 .list li{ margin:.25rem 0; }
+
 .about-grid{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:14px;
   margin-top:.5rem;
 }
-@media (max-width:800px){ .about-grid{ grid-template-columns:1fr; } }
+@media (max-width:800px){
+  .about-grid{ grid-template-columns:1fr; }
+}
+
 .about-block{
   background:#0b1222;
   border:1px solid var(--stroke);
