@@ -51,7 +51,7 @@ function TipCard({ title, points }) {
       <h4
         style={{
           margin: "0 0 8px",
-          fontSize: "clamp(15px, 3.8vw, 17px)", // ✅ scales with screen size
+          fontSize: "clamp(15px, 3.8vw, 17px)",
           lineHeight: 1.3,
         }}
       >
@@ -62,7 +62,7 @@ function TipCard({ title, points }) {
           margin: 0,
           paddingLeft: 18,
           opacity: 0.9,
-          fontSize: "clamp(13px, 3.5vw, 15px)", // ✅ scales with screen size
+          fontSize: "clamp(13px, 3.5vw, 15px)",
           lineHeight: 1.45,
         }}
       >
@@ -75,7 +75,6 @@ function TipCard({ title, points }) {
     </div>
   );
 }
-
 
 export default function Exercises() {
   const [q, setQ] = useState("");
@@ -162,73 +161,90 @@ export default function Exercises() {
         </div>
       </div>
 
-      {/* Two-column layout */}
-      <div
-        className="ex-layout"
+      {/* DENSER EXERCISES GRID */}
+      <section
+        className="ex-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "2.1fr 1fr",
-          gap: 22,
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // smaller cards
+          gap: 14, // tighter spacing
+          marginBottom: 22,
         }}
       >
-        {/* LEFT: exercises grid */}
-        <section
-          className="ex-grid"
+        {list.map((it) => (
+          <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
+        ))}
+      </section>
+
+      {/* TIPS MOVED TO THE BOTTOM */}
+      <section
+        className="ex-tips"
+        style={{
+          display: "grid",
+          gap: 14,
+          alignContent: "start",
+          gridTemplateColumns: "1fr",
+          maxWidth: 780,
+          margin: "0 auto",
+        }}
+      >
+        <TipCard
+          title="Before your workout"
+          points={[
+            "Eat a balanced meal 2–3 hours before (carbs + protein).",
+            "If short on time, have a light snack 30–60 min before.",
+            "Sip 300–500 ml water in the hour leading up.",
+          ]}
+        />
+        <TipCard
+          title="During workout"
+          points={[
+            "Water first choice; long intense sessions may need electrolytes.",
+            "For >60–90 min cardio, add 30–60 g carbs per hour.",
+          ]}
+        />
+        <TipCard
+          title="After workout"
+          points={[
+            "Aim for 20–30 g protein + carbs within 1–2 hours.",
+            "Rehydrate: 1–1.5× weight lost in fluids.",
+            "Prioritize sleep for recovery.",
+          ]}
+        />
+        <div
+          className="tip"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 18,
+            background: "rgba(15,23,42,.96)",
+            border: "1px solid rgba(255,255,255,.08)",
+            borderRadius: 14,
+            padding: 14,
           }}
         >
-          {list.map((it) => (
-            <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
-          ))}
-        </section>
-
-        {/* RIGHT: nutrition/tips */}
-        <aside style={{ display: "grid", gap: 14, alignContent: "start" }}>
-          <TipCard
-            title="Before your workout"
-            points={[
-              "Eat a balanced meal 2–3 hours before (carbs + protein).",
-              "If short on time, have a light snack 30–60 min before.",
-              "Sip 300–500 ml water in the hour leading up.",
-            ]}
-          />
-          <TipCard
-            title="During workout"
-            points={[
-              "Water first choice; long intense sessions may need electrolytes.",
-              "For >60–90 min cardio, add 30–60 g carbs per hour.",
-            ]}
-          />
-          <TipCard
-            title="After workout"
-            points={[
-              "Aim for 20–30 g protein + carbs within 1–2 hours.",
-              "Rehydrate: 1–1.5× weight lost in fluids.",
-              "Prioritize sleep for recovery.",
-            ]}
-          />
-          <div
-            className="tip"
+          <h4
             style={{
-              background: "rgba(15,23,42,.96)",
-              border: "1px solid rgba(255,255,255,.08)",
-              borderRadius: 14,
-              padding: 14,
+              marginTop: 0,
+              fontSize: "clamp(15px, 3.8vw, 17px)",
+              lineHeight: 1.3,
             }}
           >
-            <h4 style={{ marginTop: 0 }}>Quick snack ideas</h4>
-            <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
-              <li>Greek yogurt + fruit</li>
-              <li>Banana + peanut butter</li>
-              <li>Tuna on whole-grain toast</li>
-              <li>Chocolate milk</li>
-            </ul>
-          </div>
-        </aside>
-      </div>
+            Quick snack ideas
+          </h4>
+          <ul
+            style={{
+              margin: 0,
+              paddingLeft: 18,
+              opacity: 0.9,
+              fontSize: "clamp(13px, 3.5vw, 15px)",
+              lineHeight: 1.45,
+            }}
+          >
+            <li>Greek yogurt + fruit</li>
+            <li>Banana + peanut butter</li>
+            <li>Tuna on whole-grain toast</li>
+            <li>Chocolate milk</li>
+          </ul>
+        </div>
+      </section>
 
       {/* Modal */}
       <AnimatePresence>
@@ -345,6 +361,6 @@ export default function Exercises() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div> // <-- closes the page wrapper
+    </div>
   );
 }
