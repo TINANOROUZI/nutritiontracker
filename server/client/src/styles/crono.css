@@ -383,3 +383,80 @@ header.nav .hamburger span + span{ margin-top:5px }
   font-weight: 800;
 }
 .device-shot a:hover figcaption{ text-decoration: underline; }
+
+/* =============== AUTH (Login / Signup) ================= */
+.auth-wrap{
+  min-height: calc(100vh - 140px);
+  display: grid;
+  place-items: center;
+  padding: 24px 0;
+}
+
+.auth-card{
+  width: min(460px, 92%);
+  background: linear-gradient(180deg,#131a2b,#0f1524);
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  box-shadow: var(--ring);
+  padding: 20px;
+}
+
+@media (min-width: 520px){
+  .auth-card{ padding: 26px; }
+}
+
+.auth-title{
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  font-weight: 900;
+}
+.auth-sub{
+  margin: 6px 0 14px;
+  color: var(--muted);
+}
+
+.form{ display: grid; gap: 12px; }
+
+.form-row{ display: grid; gap: 6px; }
+
+.form-row label{
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.input{
+  width: 100%;
+  background: #0b1222;
+  border: 1px solid var(--stroke);
+  color: var(--ink);
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.input::placeholder{ color: #9fb0cc; opacity: .9; }
+
+.input:focus{
+  border-color: #335abf;
+  box-shadow: 0 0 0 3px rgba(96,165,250,.2);
+}
+
+.btn-wide{
+  width: 100%;
+  justify-content: center;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.auth-alt{
+  margin-top: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.link{
+  color: #cfe1ff;
+  text-decoration: underline;
+}
+.link:hover{ text-decoration: none; }
