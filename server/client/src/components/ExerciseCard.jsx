@@ -1,27 +1,28 @@
 import { motion } from "framer-motion";
 
-// map exercise names (lowercase) -> your local files
+// exact local paths for your uploaded files (match by exercise name, case-insensitive)
 const LOCAL_BY_NAME = {
   "push-ups": "/assets/exercises/pushups.jpg",
   "rowing machine": "/assets/exercises/rowing.jpg",
   "dead bug": "/assets/exercises/deadbug.jpg",
   "russian twists": "/assets/exercises/russian-twists.jpg",
+  "goblet squats": "/assets/exercises/goblet-squats.jpg",
+  "plank": "/assets/exercises/plank.jpg",
+  "jump rope": "/assets/exercises/jump-rope.jpg",
+  "yoga flow": "/assets/exercises/yoga-flow.jpg",
+  "indoor cycling": "/assets/exercises/indoor-cycling.jpg",
 };
 
-// minimal inline placeholder (never blank)
+// tiny fallback so a card is never blank
 const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
-  `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
-    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-      <stop stop-color='#111827' offset='0'/><stop stop-color='#0b1220' offset='1'/>
-    </linearGradient></defs>
-    <rect width='100%' height='100%' fill='url(#g)'/>
-    <text x='50%' y='58%' font-family='Inter,Segoe UI,Arial' font-size='120' fill='rgba(255,255,255,.92)' text-anchor='middle' font-weight='700'>Workout</text>
-  </svg>`
+  `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='675'>
+     <rect width='100%' height='100%' fill='#0b1220'/>
+   </svg>`
 )}`;
 
 function resolveImage(item) {
   const orig = (item?.image || "").trim();
-  if (orig) return orig;
+  if (orig) return orig; // keep image if provided in data
   const key = (item?.name || "").toLowerCase().trim();
   return LOCAL_BY_NAME[key] || PLACEHOLDER;
 }
