@@ -5,28 +5,40 @@ import { EXERCISES } from "../data/exercises";
 
 const CATS = ["All", "Cardio", "Strength", "Core", "Mobility"];
 
-// same name -> local file map (lowercase keys)
-const LOCAL_BY_NAME = {
-  "push-ups": "/assets/exercises/pushups.jpg",
-  "rowing machine": "/assets/exercises/rowing.jpg",
-  "dead bug": "/assets/exercises/deadbug.jpg",
-  "russian twists": "/assets/exercises/russian-twists.jpg",
+/* Local images you uploaded (exact exercise names) */
+const LOCAL_IMG_BY_NAME = {
+  "Push-Ups": "/assets/exercises/pushups.jpg",
+  "Rowing Machine": "/assets/exercises/rowing.jpg",
+  "Dead Bug": "/assets/exercises/deadbug.jpg",
+  "Russian Twists": "/assets/exercises/russian-twists.jpg",
+  "Goblet Squats": "/assets/exercises/goblet-squats.jpg",
+  "Jump Rope": "/assets/exercises/jump-rope.jpg",
+  "Yoga Flow": "/assets/exercises/yoga-flow.jpg",
+  "Indoor Cycling": "/assets/exercises/indoor-cycling.jpg",
+  "Plank": "/assets/exercises/plank.jpg", // Added Plank image
 };
 
-const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
-  `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
+/* Tiny built-in fallback so you always see *something* even if a name doesn't match */
+const DEFAULT_PLACEHOLDER = data:image/svg+xml;utf8,${encodeURIComponent(
+  <svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
     <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-      <stop stop-color='#111827' offset='0'/><stop stop-color='#0b1220' offset='1'/>
+      <stop stop-color='#1f2937' offset='0'/><stop stop-color='#0b1220' offset='1'/>
     </linearGradient></defs>
     <rect width='100%' height='100%' fill='url(#g)'/>
-  </svg>`
-)}`;
+    <text x='50%' y='55%' font-family='Inter,Segoe UI,Arial' font-size='120'
+          fill='rgba(255,255,255,.92)' text-anchor='middle' font-weight='700'>
+      Workout
+    </text>
+    <text x='50%' y='72%' font-family='Inter,Segoe UI,Arial' font-size='56'
+          fill='rgba(255,255,255,.85)' text-anchor='middle'>Let’s move ⚡️</text>
+  </svg>
+)};
 
-function resolveImage(x) {
-  const orig = (x?.image || "").trim();
-  if (orig) return orig;
-  const key = (x?.name || "").toLowerCase().trim();
-  return LOCAL_BY_NAME[key] || PLACEHOLDER;
+/** Use original image if present, else your local file, else a tiny placeholder */
+function pickImage(x) {
+  const original = (x.image || "").trim();
+  if (original) return original; // If the exercise object already has an image, use it
+  return LOCAL_IMG_BY_NAME[x.name] || DEFAULT_PLACEHOLDER; // Otherwise, look up in local files or use placeholder
 }
 
 export default function Exercises() {
@@ -36,22 +48,23 @@ export default function Exercises() {
 
   const list = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return EXERCISES.filter((x) =>
-      (cat === "All" || x.category === cat) &&
-      (!term ||
-        x.name.toLowerCase().includes(term) ||
-        x.muscles.toLowerCase().includes(term) ||
-        x.equipment.toLowerCase().includes(term))
+    return EXERCISES.filter(
+      (x) =>
+        (cat === "All" || x.category === cat) &&
+        (!term ||
+          x.name.toLowerCase().includes(term) ||
+          x.muscles.toLowerCase().includes(term) ||
+          x.equipment.toLowerCase().includes(term))
     );
   }, [q, cat]);
 
   return (
     <div className="ex-page">
       <header className="ex-hero">
-        <h1>Move your body, fuel your life ⚡</h1>
+        <h1>Move your body, fuel your life ⚡️</h1>
         <p>Find exercises you love—search by name, muscle group, or equipment.</p>
 
-      <div className="ex-search">
+        <div className="ex-search">
           <input
             placeholder="Search: squat, cardio, dumbbell…"
             value={q}
@@ -61,7 +74,7 @@ export default function Exercises() {
             {CATS.map((c) => (
               <button
                 key={c}
-                className={`chip ${cat === c ? "chip--on" : ""}`}
+                className={chip ${cat === c ? "chip--on" : ""}}
                 onClick={() => setCat(c)}
               >
                 {c}
@@ -73,7 +86,7 @@ export default function Exercises() {
 
       <section className="ex-grid">
         {list.map((it) => {
-          const withImg = { ...it, image: resolveImage(it) };
+          const withImg = { ...it, image: pickImage(it) };
           return (
             <ExerciseCard
               key={it.id}
@@ -102,16 +115,12 @@ export default function Exercises() {
             >
               <div
                 className="ex-sheet-img"
-                style={{ backgroundImage: `url(${resolveImage(active)})` }}
-              />
+                style={{ backgroundImage: url(${pickImage(active)}) }}
+              /> {/* This line now correctly uses template literals */}
               <h3>{active.name}</h3>
               <p className="ex-sheet-sub">
-                {active.category} • {active.muscles} • {active.equipment} • {active.difficulty}
+                {active.category} • {active.muscles} • {active.equipment}
               </p>
-              <ol className="ex-steps">
-                {active.how.map((step, i) => <li key={i}>{step}</li>)}
-              </ol>
-              <button className="btn-primary" onClick={() => setActive(null)}>Close</button>
             </motion.div>
           </motion.div>
         )}
