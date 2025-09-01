@@ -4,58 +4,22 @@ import { EXERCISES } from "../data/exercises";
 
 const CATS = ["All", "Cardio", "Strength", "Core", "Mobility"];
 
+// same helper as the card to ensure the modal always has a photo
+const U = (q) =>
+  `https://source.unsplash.com/1200x800/?${encodeURIComponent(q)}`;
+const modalFallback = (ex = {}) => {
+  const mix = [ex.name, ex.muscles, ex.equipment, ex.category]
+    .filter(Boolean)
+    .join(" ");
+  return U(`${mix} workout fitness`);
+};
+
 export default function Exercises() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const [active, setActive] = useState(null);
 
-  // --- Photo fallbacks (only used when item.image is missing) ---
-  const U = (q) =>
-    `https://source.unsplash.com/800x600/?${encodeURIComponent(q)}`;
-
-  const FALLBACKS = [
-    ["rowing machine", U("rowing machine, cardio, gym")],
-    ["row", U("rowing machine, cardio")],
-    ["dead bug", U("core rehab exercise, mat")],
-    ["russian twist", U("russian twist, core, abs")],
-    ["push-up", U("push-up, calisthenics")],
-    ["push up", U("push-up, workout")],
-    ["plank", U("plank, core workout")],
-    ["goblet squat", U("goblet squat, kettlebell")],
-    ["squat", U("squat, legs, gym")],
-    ["jump rope", U("jump rope, cardio")],
-    ["yoga", U("yoga, mat, flexibility")],
-    ["indoor cycling", U("spin bike, indoor cycling")],
-    ["cycling", U("indoor cycling, bike workout")],
-    ["glute bridge", U("glute bridge, hip thrust")],
-    ["lunge", U("lunge, legs")],
-    ["curl", U("bicep curl, dumbbell")],
-    ["press", U("shoulder press, dumbbell")],
-    ["core", U("abs, core workout")],
-    ["cardio", U("cardio, fitness")],
-    ["bodyweight", U("bodyweight workout")],
-  ];
-  const DEFAULT_IMG = U("fitness, workout, gym");
-
-  const fallbackFor = (item = {}) => {
-    const hay = [
-      item.name,
-      item.muscles,
-      item.equipment,
-      item.category,
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-
-    for (const [key, url] of FALLBACKS) {
-      if (hay.includes(key)) return url;
-    }
-    return DEFAULT_IMG;
-  };
-  // -------------------------------------------------------------
-
-  // Filtered list
+  // Filtered list (unchanged)
   const list = useMemo(() => {
     const term = q.trim().toLowerCase();
     return EXERCISES.filter(
@@ -68,17 +32,7 @@ export default function Exercises() {
     );
   }, [q, cat]);
 
-  // Enrich with images where missing (does not change original EXERCISES)
-  const enriched = useMemo(
-    () =>
-      list.map((x) => ({
-        ...x,
-        image: x.image || fallbackFor(x),
-      })),
-    [list]
-  );
-
-  // Close modal on ESC, and lock scroll while open
+  // Close modal on ESC, and lock scroll while open (unchanged)
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setActive(null);
@@ -127,13 +81,13 @@ export default function Exercises() {
             ))}
           </div>
           <div className="muted" style={{ marginTop: 6 }}>
-            Showing <strong>{enriched.length}</strong> of {EXERCISES.length}
+            Showing <strong>{list.length}</strong> of {EXERCISES.length}
           </div>
         </div>
       </header>
 
       {/* Results */}
-      {enriched.length === 0 ? (
+      {list.length === 0 ? (
         <div
           className="qa-card"
           style={{ textAlign: "center", marginTop: 10, padding: "1.2rem" }}
@@ -161,24 +115,22 @@ export default function Exercises() {
         </div>
       ) : (
         <section className="ex-grid">
-          {enriched.map((it) => (
-            <ExerciseCard
-              key={it.id}
-              item={it}
-              onClick={() => setActive(it)} // pass enriched item so modal has image
-            />
+          {list.map((it) => (
+            <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
           ))}
         </section>
       )}
 
-      {/* Modal */}
+      {/* Modal (now has a fallback image too) */}
       {active && (
         <div className="ex-modal" onClick={() => setActive(null)}>
           <div className="ex-sheet" onClick={(e) => e.stopPropagation()}>
             <div
               className="ex-sheet-img"
               style={{
-                backgroundImage: `url(${active.image || fallbackFor(active)})`,
+                backgroundImage: `url(${
+                  active.image || modalFallback(active)
+                })`,
               }}
             />
             <h3 style={{ margin: "0 0 .2rem" }}>{active.name}</h3>
