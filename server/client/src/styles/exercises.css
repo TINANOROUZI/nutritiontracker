@@ -1,0 +1,77 @@
+/* Container */
+.ex-page { max-width: 1200px; margin: 0 auto; padding: 24px 16px 80px; }
+@media (max-width: 960px){
+  .ex-page { padding: 16px 12px 64px; }
+}
+
+/* Hero */
+.ex-hero h1 { font-size: 30px; }
+.ex-hero p  { opacity: .85; }
+@media (max-width: 960px){
+  .ex-hero h1 { font-size: 22px; }
+  .ex-hero p  { font-size: 14px; }
+}
+
+/* Two-column layout → single column on mobile */
+.ex-layout { display: grid; grid-template-columns: 2.1fr 1fr; gap: 22px; }
+@media (max-width: 960px){
+  .ex-layout { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* Exercises grid */
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 18px; }
+@media (max-width: 600px){
+  .ex-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+
+/* Filter chips: make horizontally scrollable on mobile */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+@media (max-width: 600px){
+  .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+  .chips > * { scroll-snap-align: start; }
+}
+
+/* Cards */
+.ex-card {
+  background: rgba(15,23,42,.96);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 12px;
+  text-align: left;
+  box-shadow: 0 6px 24px rgba(0,0,0,.25);
+}
+.ex-card figure { height: 220px; border-radius: 12px; overflow: hidden; margin: 0; background: #0b1220; }
+.ex-title { font-weight: 700; font-size: 18px; margin-bottom: 6px; }
+.ex-meta  { opacity: .85; }
+
+@media (max-width: 600px){
+  .ex-card { padding: 10px; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,.25); }
+  .ex-card figure { height: 180px; border-radius: 10px; }
+  .ex-title { font-size: 17px; }
+  .ex-meta  { font-size: 13px; }
+}
+
+/* Sidebar tip cards */
+.tip {
+  background: rgba(15,23,42,.96);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+.tip h4 { margin: 0 0 8px; }
+.tip ul { margin: 0; padding-left: 18px; opacity: .9; }
+
+@media (max-width: 600px){
+  .tip { padding: 12px; border-radius: 12px; }
+  .tip h4 { font-size: 16px; margin-bottom: 6px; }
+  .tip ul { font-size: 14px; line-height: 1.45; }
+}
+
+/* Modal */
+.ex-sheet { width: min(900px, 92vw); }
+.ex-sheet-hero { height: 360px; background: #0b1220; }
+
+@media (max-width: 600px){
+  .ex-sheet { width: min(540px, 94vw); }
+  .ex-sheet-hero { height: 220px; }
+}
