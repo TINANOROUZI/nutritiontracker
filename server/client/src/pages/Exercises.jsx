@@ -1,3 +1,4 @@
+// src/pages/Exercises.jsx
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExerciseCard from "../components/ExerciseCard";
@@ -20,6 +21,35 @@ export default function Exercises() {
         x.equipment.toLowerCase().includes(term))
     );
   }, [q, cat]);
+
+  // ---- Added only for images (modal fallback) ----
+  const NAME_FALLBACKS = {
+    "Push-Ups": "https://source.unsplash.com/1600x900/?pushups,fitness,gym",
+    "Goblet Squats": "https://source.unsplash.com/1600x900/?goblet,squat,weightlifting",
+    "Rowing Machine": "https://source.unsplash.com/1600x900/?rowing,erg,cardio",
+    "Dead Bug": "https://source.unsplash.com/1600x900/?core,abs,workout",
+  };
+  const CAT_FALLBACKS = {
+    Cardio: "https://source.unsplash.com/1600x900/?cardio,fitness",
+    Strength: "https://source.unsplash.com/1600x900/?strength,weights,gym",
+    Core: "https://source.unsplash.com/1600x900/?core,abs,plank",
+    Mobility: "https://source.unsplash.com/1600x900/?stretching,mobility,yoga",
+  };
+  const DEFAULT_IMG = "https://source.unsplash.com/1600x900/?fitness,workout";
+
+  const modalBg =
+    active
+      ? [
+          (active.image ?? "").trim(),
+          NAME_FALLBACKS[active.name],
+          CAT_FALLBACKS[active.category],
+          DEFAULT_IMG,
+        ]
+          .filter(Boolean)
+          .map((u) => `url("${u}")`)
+          .join(", ")
+      : undefined;
+  // ------------------------------------------------
 
   return (
     <div className="ex-page">
@@ -55,14 +85,24 @@ export default function Exercises() {
 
       <AnimatePresence>
         {active && (
-          <motion.div className="ex-modal" initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      onClick={() => setActive(null)}>
-            <motion.div className="ex-sheet"
-                        initial={{ y: 40 }} animate={{ y: 0 }} exit={{ y: 40 }}
-                        onClick={(e) => e.stopPropagation()}>
-              <div className="ex-sheet-img"
-                   style={{ backgroundImage: `url(${active.image})` }} />
+          <motion.div
+            className="ex-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setActive(null)}
+          >
+            <motion.div
+              className="ex-sheet"
+              initial={{ y: 40 }}
+              animate={{ y: 0 }}
+              exit={{ y: 40 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="ex-sheet-img"
+                style={{ backgroundImage: modalBg }}
+              />
               <h3>{active.name}</h3>
               <p className="ex-sheet-sub">
                 {active.category} • {active.muscles} • {active.equipment} • {active.difficulty}
