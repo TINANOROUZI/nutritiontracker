@@ -48,15 +48,34 @@ function TipCard({ title, points }) {
         padding: 14,
       }}
     >
-      <h4 style={{ margin: "0 0 8px" }}>{title}</h4>
-      <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
+      <h4
+        style={{
+          margin: "0 0 8px",
+          fontSize: "clamp(15px, 3.8vw, 17px)", // ✅ scales with screen size
+          lineHeight: 1.3,
+        }}
+      >
+        {title}
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: 18,
+          opacity: 0.9,
+          fontSize: "clamp(13px, 3.5vw, 15px)", // ✅ scales with screen size
+          lineHeight: 1.45,
+        }}
+      >
         {points.map((p, i) => (
-          <li key={i}>{p}</li>
+          <li key={i} style={{ marginBottom: 6 }}>
+            {p}
+          </li>
         ))}
       </ul>
     </div>
   );
 }
+
 
 export default function Exercises() {
   const [q, setQ] = useState("");
