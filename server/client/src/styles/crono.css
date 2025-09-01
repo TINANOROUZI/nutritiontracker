@@ -288,7 +288,7 @@ header.nav .hamburger span + span{ margin-top:5px }
   height:100%;
   object-fit:cover;
   display:block;
-  pointer-events: none;     /* <— prevents clicks on the image */
+  pointer-events: none;     /* hero remains non-clickable */
   user-select: none;
 }
 
@@ -341,7 +341,8 @@ header.nav .hamburger span + span{ margin-top:5px }
   color:#a4b7d8; border-top:1px solid #16223e;
   padding:16px 0; margin-top:24px;
 }
-/* Devices gallery (photos only) */
+
+/* ===================== DEVICES GALLERY (PHOTOS ONLY) ===================== */
 .device-gallery{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -357,15 +358,28 @@ header.nav .hamburger span + span{ margin-top:5px }
   overflow: hidden;
   box-shadow: var(--ring);
 }
+
+/* Make the entire card (image + caption) clickable */
+.device-shot a{
+  display:block;
+  color:inherit;
+  text-decoration:none;
+}
+.device-shot a:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+
 .device-shot img{
   width: 100%;
   height: 360px;               /* adjust if you want taller/shorter */
   object-fit: cover;
   display: block;
-  pointer-events: none;        /* ensure the photo isn’t clickable */
+  pointer-events: auto;        /* clickable for links */
   user-select: none;
 }
 .device-shot figcaption{
   padding: 12px 14px;
   font-weight: 800;
 }
+.device-shot a:hover figcaption{ text-decoration: underline; }
