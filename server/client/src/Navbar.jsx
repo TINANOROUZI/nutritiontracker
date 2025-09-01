@@ -15,11 +15,12 @@ export default function Navbar() {
           <a href="#about">About</a>
         </nav>
 
-        {/* Hamburger with 3 spans */}
+        {/* Three-line hamburger (right aligned) */}
         <button
-          className={`hamburger-min ${open ? "is-open" : ""}`}
-          onClick={() => setOpen(!open)}
+          className={`hamburger-3 ${open ? "is-open" : ""}`}
           aria-label="Menu"
+          aria-expanded={open}
+          onClick={() => setOpen(v => !v)}
         >
           <span></span>
           <span></span>
@@ -27,7 +28,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Drawer */}
+      {/* Mobile drawer (optional) */}
       {open && (
         <>
           <div className="drawer-backdrop" onClick={() => setOpen(false)} />
