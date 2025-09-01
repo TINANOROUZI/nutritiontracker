@@ -1,14 +1,13 @@
+// src/components/BmiWidget.jsx
 import { useMemo, useState } from "react";
 
 /**
- * Compact BMI widget styled like the sample (weight/height panels + unit toggles).
- * - Inline styles only (safe inside your existing Quick BMI card).
- * - Auto converts kg⇄lb and cm⇄in as the user toggles units.
- * - Small footprint: max 560px wide; stacks on mobile.
- * - Emits result via onSubmit (optional).
+ * Compact BMI widget (weight + height panels with unit toggles),
+ * sized to sit nicely on your Home hero.
+ * No external CSS—safe inside your existing card/box.
  */
-export default function BMIWidget({ onSubmit }) {
-  // values always stored in metric internally
+export default function BmiWidget({ onSubmit }) {
+  // Internally store metric
   const [kg, setKg] = useState(60);
   const [cm, setCm] = useState(165);
   const [uW, setUW] = useState("kg"); // 'kg' | 'lb'
@@ -30,33 +29,33 @@ export default function BMIWidget({ onSubmit }) {
     return { bmi, cat, color };
   }, [kg, cm]);
 
-  // ---------- styles (scoped) ----------
-  const card = { maxWidth: 560, margin: "0 auto", display: "grid", gap: 12 };
+  // --- scoped styles (kept small to fit your hero) ---
+  const card = { maxWidth: 520, width: "100%", display: "grid", gap: 10 };
   const panels = {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: 12,
+    gap: 10,
   };
   const panel = {
     background: "rgba(15,23,42,.9)",
     border: "1px solid rgba(255,255,255,.10)",
     borderRadius: 14,
-    padding: 12,
+    padding: 10,
     display: "grid",
-    gap: 10,
+    gap: 8,
   };
   const header = {
     background: "#7a0323",
     color: "white",
-    padding: "8px 12px",
+    padding: "6px 10px",
     borderRadius: 10,
     fontWeight: 700,
-    fontSize: 15,
+    fontSize: 14,
   };
-  const toggleWrap = { display: "flex", background: "rgba(255,255,255,.08)", borderRadius: 999, padding: 4, gap: 4, width: "fit-content" };
-  const toggleBtn = (on, roundLeft, roundRight) => ({
-    padding: "6px 12px",
-    borderRadius: roundLeft ? "999px 0 0 999px" : roundRight ? "0 999px 999px 0" : 999,
+  const toggleWrap = { display: "flex", background: "rgba(255,255,255,.08)", borderRadius: 999, padding: 3, gap: 4, width: "fit-content" };
+  const toggleBtn = (on, left, right) => ({
+    padding: "6px 10px",
+    borderRadius: left ? "999px 0 0 999px" : right ? "0 999px 999px 0" : 999,
     background: on ? "#e11d48" : "transparent",
     border: "1px solid rgba(255,255,255,.12)",
     color: "white",
@@ -68,18 +67,18 @@ export default function BMIWidget({ onSubmit }) {
     background: "rgba(255,255,255,.06)",
     border: "1px solid rgba(255,255,255,.12)",
     borderRadius: 12,
-    padding: 10,
+    padding: 8,
     display: "grid",
     gap: 6,
   };
   const unitBadge = {
     justifySelf: "start",
-    fontSize: 12,
+    fontSize: 11,
     background: "#e5e7eb22",
     color: "white",
     border: "1px solid rgba(255,255,255,.16)",
     borderRadius: 10,
-    padding: "4px 8px",
+    padding: "3px 8px",
   };
   const numberInput = {
     width: "100%",
@@ -89,19 +88,19 @@ export default function BMIWidget({ onSubmit }) {
     background: "rgba(0,0,0,.25)",
     color: "white",
     outline: "none",
-    fontSize: 16,
+    fontSize: 15,
   };
-  const illus = { height: 58, borderRadius: 10, background: "linear-gradient(180deg,#c1ebe0,#96d9c9)", display: "grid", placeItems: "center", color: "#334155", fontWeight: 700, fontSize: 12 };
+  const illus = { height: 52, borderRadius: 10, background: "linear-gradient(180deg,#c1ebe0,#96d9c9)", display: "grid", placeItems: "center", color: "#334155", fontWeight: 700, fontSize: 11 };
   const goBtn = {
     background: "#059669",
     border: "1px solid rgba(255,255,255,.18)",
     color: "white",
     fontWeight: 800,
     borderRadius: 999,
-    padding: "10px 16px",
+    padding: "9px 14px",
     cursor: "pointer",
     justifySelf: "center",
-    width: 140,
+    width: 120,
   };
   const result = {
     display: "grid",
@@ -109,7 +108,7 @@ export default function BMIWidget({ onSubmit }) {
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-    paddingTop: 4,
+    paddingTop: 2,
     fontSize: 14,
   };
   const chip = {
@@ -120,12 +119,12 @@ export default function BMIWidget({ onSubmit }) {
     fontWeight: 700,
   };
 
-  // mobile stack
+  // mobile stack (kept inline; no global CSS)
   if (typeof window !== "undefined" && window.innerWidth < 560) {
     panels.gridTemplateColumns = "1fr";
   }
 
-  // ---------- handlers ----------
+  // handlers convert displayed units back to metric storage
   const setWeightDisplay = (val) => {
     const n = Number(val);
     if (!isFinite(n)) return;
@@ -137,14 +136,10 @@ export default function BMIWidget({ onSubmit }) {
     setCm(uH === "cm" ? n : +(n * 2.54));
   };
 
-  const submit = () => {
-    onSubmit?.(bmiData);
-  };
-
   return (
     <div style={card}>
       <div style={panels}>
-        {/* Weight panel */}
+        {/* Weight */}
         <div style={panel}>
           <div style={header}>Enter your weight</div>
           <div style={toggleWrap}>
@@ -165,7 +160,7 @@ export default function BMIWidget({ onSubmit }) {
           </div>
         </div>
 
-        {/* Height panel */}
+        {/* Height */}
         <div style={panel}>
           <div style={header}>Enter your height</div>
           <div style={toggleWrap}>
@@ -188,13 +183,22 @@ export default function BMIWidget({ onSubmit }) {
       </div>
 
       {/* CTA + Result */}
-      <button style={goBtn} onClick={submit}>Go</button>
+      <button style={goBtn} onClick={() => onSubmit?.(bmiData)}>Go</button>
       <div style={result}>
         <span style={{ fontWeight: 800, fontSize: 18 }}>{bmiData.bmi}</span>
         <span style={chip}>{bmiData.cat}</span>
       </div>
+
+      {/* tiny progress bar (maps 15–40 BMI) */}
       <div style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,.10)", overflow: "hidden" }}>
-        <div style={{ width: `${Math.max(0, Math.min(100, ((bmiData.bmi - 15) / 25) * 100))}%`, height: "100%", background: bmiData.color }} />
+        <div
+          style={{
+            width: `${Math.max(0, Math.min(100, ((bmiData.bmi - 15) / 25) * 100))}%`,
+            height: "100%",
+            background: bmiData.color,
+            transition: "width .2s ease",
+          }}
+        />
       </div>
     </div>
   );
