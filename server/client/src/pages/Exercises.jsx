@@ -1,3 +1,4 @@
+// src/pages/Exercises.jsx
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExerciseCard from "../components/ExerciseCard";
@@ -5,27 +6,24 @@ import { EXERCISES } from "../data/exercises";
 
 const CATS = ["All", "Cardio", "Strength", "Core", "Mobility"];
 
-// same resolver for the modal image
-const LOCAL_BY_NAME = {
-  "push-ups": "/assets/exercises/pushups.jpg",
-  "rowing machine": "/assets/exercises/rowing.jpg",
-  "dead bug": "/assets/exercises/deadbug.jpg",
-  "russian twists": "/assets/exercises/russian-twists.jpg",
-  "goblet squats": "/assets/exercises/goblet-squats.jpg",
-  "plank": "/assets/exercises/plank.jpg",
-  "jump rope": "/assets/exercises/jump-rope.jpg",
-  "yoga flow": "/assets/exercises/yoga-flow.jpg",
-  "indoor cycling": "/assets/exercises/indoor-cycling.jpg",
+// EXACT name → local image path (must match the card titles)
+const IMG_BY_NAME = {
+  "Push-Ups": "/assets/exercises/pushups.jpg",
+  "Rowing Machine": "/assets/exercises/rowing.jpg",
+  "Dead Bug": "/assets/exercises/deadbug.jpg",
+  "Russian Twists": "/assets/exercises/russian-twists.jpg",
+  "Goblet Squats": "/assets/exercises/goblet-squats.jpg",
+  "Plank": "/assets/exercises/plank.jpg",
+  "Jump Rope": "/assets/exercises/jump-rope.jpg",
+  "Yoga Flow": "/assets/exercises/yoga-flow.jpg",
+  "Indoor Cycling": "/assets/exercises/indoor-cycling.jpg",
 };
-const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
-  `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='675'>
-     <rect width='100%' height='100%' fill='#0b1220'/>
-   </svg>`
-)}`;
-const resolveImage = (x) =>
-  (x?.image || "").trim() ||
-  LOCAL_BY_NAME[(x?.name || "").toLowerCase().trim()] ||
-  PLACEHOLDER;
+
+// keep original image if present, otherwise force the local one
+function withImage(x) {
+  const img = (x.image || "").trim();
+  return { ...x, image: img || IMG_BY_NAME[x.name] || "/assets/exercises/plank.jpg" };
+}
 
 export default function Exercises() {
   const [q, setQ] = useState("");
@@ -70,9 +68,16 @@ export default function Exercises() {
       </header>
 
       <section className="ex-grid">
-        {list.map((it) => (
-          <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
-        ))}
+        {list.map((it) => {
+          const item = withImage(it); // <- force image here
+          return (
+            <ExerciseCard
+              key={it.id}
+              item={item}
+              onClick={() => setActive(item)}
+            />
+          );
+        })}
       </section>
 
       <AnimatePresence>
@@ -93,7 +98,7 @@ export default function Exercises() {
             >
               <div
                 className="ex-sheet-img"
-                style={{ backgroundImage: `url(${resolveImage(active)})` }}
+                style={{ backgroundImage: `url(${withImage(active).image})` }} // <- and here
               />
               <h3>{active.name}</h3>
               <p className="ex-sheet-sub">
