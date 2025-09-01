@@ -8,41 +8,33 @@ export default function Navbar() {
       <div className="nav-inner">
         <div className="brand">🍎 NutriVision</div>
 
-        {/* Desktop links */}
+        {/* desktop links */}
         <nav className="links">
           <a href="#analyze">Analyze</a>
           <a href="#history">History</a>
           <a href="#about">About</a>
         </nav>
 
-        {/* Hamburger for mobile */}
+        {/* minimal hamburger */}
         <button
-          className={`hamburger ${open ? "is-open" : ""}`}
+          className={`hamburger-min ${open ? "is-open" : ""}`}
           aria-label="Menu"
           aria-expanded={open}
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen(v => !v)}
         >
-          <span className="bar"></span>
+          <span className="bar" />
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* mobile drawer (optional, keep if you need it) */}
       {open && (
         <>
-          <div
-            className="drawer-backdrop"
-            onClick={() => setOpen(false)}
-          ></div>
+          <div className="drawer-backdrop" onClick={() => setOpen(false)} />
           <div className="drawer show">
             <div className="drawer-inner">
               <div className="drawer-header">
                 <span>Menu</span>
-                <button
-                  className="drawer-close"
-                  onClick={() => setOpen(false)}
-                >
-                  ✕
-                </button>
+                <button className="drawer-close" onClick={() => setOpen(false)}>✕</button>
               </div>
               <div className="drawer-links">
                 <a href="#analyze" onClick={() => setOpen(false)}>Analyze</a>
