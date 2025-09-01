@@ -29,16 +29,29 @@ a{ color:inherit; text-decoration:none }
 .container{ width:min(1200px,92%); margin-inline:auto }
 
 /* NAVBAR */
-header.nav{
-  position:sticky; top:0; z-index:50;
-  background: rgba(10,14,25,.6);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #16223e;
-}
+/* make sure .nav-inner is a flex row */
 header.nav .nav-inner{
-  max-width:1200px; margin:0 auto; padding:10px 16px;
-  display:flex; align-items:center;
+  display:flex;
+  align-items:center;
+  /* this keeps items left-aligned until we push the burger with auto margin */
+  justify-content:flex-start;
 }
+
+/* FORCE the hamburger to the far right */
+header.nav .nav-inner > .hamburger-3{
+  margin-left:auto !important;       /* LTR */
+  margin-inline-start:auto !important; /* logical prop for extra safety */
+}
+
+/* keep desktop vs mobile behavior */
+@media (min-width:1025px){
+  header.nav .links{ display:flex; }
+  .hamburger-3{ display:none !important; }
+}
+@media (max-width:1024px){
+  header.nav .links{ display:none; }
+}
+
 .brand{ font-weight:900; font-size:1.15rem; color:#eaf1ff; }
 
 /* Desktop links */
