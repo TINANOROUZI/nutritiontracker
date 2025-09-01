@@ -276,3 +276,8 @@ header.nav .nav-inner{
 .about-block{ background:#0b1222; border:1px solid var(--stroke); border-radius:14px; padding:14px; }
 .about-block h3{ margin:.1rem 0 .35rem; font-size:1.05rem; font-weight:900; }
 .about-block p{ margin:0; color:var(--muted); line-height:1.6; }
+/* Stop the navbar from following the scroll */
+header.nav{
+  position: static !important;  /* was: sticky */
+  top: auto !important;
+}
