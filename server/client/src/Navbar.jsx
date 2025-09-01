@@ -6,27 +6,27 @@ export default function Navbar() {
   return (
     <header className="nav">
       <div className="nav-inner">
-        <div className="brand">🍎 NutriVision</div>
+        <div className="brand">🍎 <strong>NutriVision</strong></div>
 
-        {/* desktop links */}
+        {/* desktop links (hidden on mobile) */}
         <nav className="links">
           <a href="#analyze">Analyze</a>
           <a href="#history">History</a>
           <a href="#about">About</a>
         </nav>
 
-        {/* minimal hamburger */}
+        {/* minimal hamburger (right side) */}
         <button
           className={`hamburger-min ${open ? "is-open" : ""}`}
           aria-label="Menu"
           aria-expanded={open}
           onClick={() => setOpen(v => !v)}
         >
-          <span className="bar" />
+          <span className="bar"></span>
         </button>
       </div>
 
-      {/* mobile drawer (optional, keep if you need it) */}
+      {/* mobile drawer */}
       {open && (
         <>
           <div className="drawer-backdrop" onClick={() => setOpen(false)} />
