@@ -1,49 +1,62 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext.jsx";
+import React, { useState } from "react";
 
-export default function Login(){
-  const { login } = useAuth();
-  const nav = useNavigate();
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [err,setErr]=useState("");
-  const [loading,setLoading]=useState(false);
+export default function Login({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      setLoading(true); setErr("");
-      await login(email, password);
-      nav("/history");  // redirect after login
-    } catch {
-      setErr("Login failed");
-    } finally {
-      setLoading(false);
-    }
+    if (typeof onLogin === "function") onLogin(email, password);
+    // else: handle your existing login flow here
   };
 
   return (
-    <section className="card" style={{maxWidth:520, margin:"16px auto"}}>
-      <h2>Log in</h2>
-      <form onSubmit={onSubmit} className="form">
-        <label>Email
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required />
-        </label>
-        <label>Password
-          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
-        </label>
-        {err && <div className="error">{err}</div>}
-        <button className="btn primary" disabled={loading}>
-          {loading ? "Logging in…" : "Log in"}
-        </button>
-      </form>
+    <main className="auth-wrap">
+      <div className="auth-card">
+        <h1 className="auth-title">Log in</h1>
+        <p className="auth-sub">Welcome back! Enter your details.</p>
 
-      {/* 👇 Link to Signup page */}
-      <p className="small muted">
-        No account yet?{" "}
-        <Link to="/signup" className="accent-link">Create account</Link>
-      </p>
-    </section>
+        <form onSubmit={handleSubmit} className="form">
+          <div className="form-row">
+            <label htmlFor="email">Email</label>
+            <input
+              className="input"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@email.com"
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          <div className="form-row">
+            <label htmlFor="password">Password</label>
+            <input
+              className="input"
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary btn-wide">
+            Log in
+          </button>
+        </form>
+
+        <p className="auth-alt">
+          No account yet?{" "}
+          <a href="/signup" className="link">
+            Create account
+          </a>
+        </p>
+      </div>
+    </main>
   );
 }
