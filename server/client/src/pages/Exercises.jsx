@@ -29,7 +29,7 @@ const norm = (s) =>
     .trim()
     .replace(/s\b/, "");
 
-// ✅ local first → external → placeholder
+// local first → external → placeholder
 const resolveImage = (x) => {
   const k = norm(x?.name);
   if (LOCAL_BY_NAME[k]) return LOCAL_BY_NAME[k];
@@ -114,7 +114,15 @@ export default function Exercises() {
             outline: "none",
           }}
         />
-        <div className="chips">
+        <div
+          className="chips"
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
           {CATS.map((c) => (
             <button
               key={c}
@@ -136,9 +144,23 @@ export default function Exercises() {
       </div>
 
       {/* Two-column layout */}
-      <div className="ex-layout">
+      <div
+        className="ex-layout"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2.1fr 1fr",
+          gap: 22,
+        }}
+      >
         {/* LEFT: exercises grid */}
-        <section className="ex-grid">
+        <section
+          className="ex-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: 18,
+          }}
+        >
           {list.map((it) => (
             <ExerciseCard key={it.id} item={it} onClick={() => setActive(it)} />
           ))}
@@ -189,115 +211,121 @@ export default function Exercises() {
         </aside>
       </div>
 
-     {/* Modal */}
-<AnimatePresence>
-  {active && (
-    <motion.div
-      className="ex-modal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={() => setActive(null)}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,.6)",
-        display: "grid",
-        placeItems: "center",
-        zIndex: 50,
-        padding: 12, // small padding so the sheet never touches edges on mobile
-      }}
-    >
-      <motion.div
-        className="ex-sheet"
-        initial={{ y: 40, scale: 0.98 }}
-        animate={{ y: 0, scale: 1 }}
-        exit={{ y: 40, scale: 0.98 }}
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "min(900px, 92vw)",
-          maxHeight: "92vh",              // ✅ cap overall height
-          background: "rgba(15,23,42,.98)",
-          border: "1px solid rgba(255,255,255,.08)",
-          borderRadius: 16,
-          overflow: "hidden",
-          boxShadow: "0 12px 48px rgba(0,0,0,.45)",
-          display: "grid",
-          gridTemplateRows: "auto 1fr",   // header image + scrollable body
-          position: "relative",
-        }}
-      >
-        {/* Always-visible Close (X) */}
-        <button
-          aria-label="Close"
-          onClick={() => setActive(null)}
-          style={{
-            position: "absolute",
-            top: 10,
-            right: 10,
-            padding: "6px 10px",
-            borderRadius: 10,
-            border: "1px solid rgba(255,255,255,.18)",
-            background: "rgba(0,0,0,.35)",
-            color: "white",
-            cursor: "pointer",
-            backdropFilter: "blur(4px)",
-          }}
-        >
-          ×
-        </button>
-
-        {/* Hero image with responsive height */}
-        <div
-          className="ex-sheet-hero"
-          style={{
-            height: "min(42vh, 340px)",   // ✅ smaller on phones, capped on desktop
-            background: "#0b1220",
-          }}
-        >
-          <img
-            src={resolveImage(active)}
-            alt={active.name}
-            onError={(e) => (e.currentTarget.src = PLACEHOLDER)}
-            loading="eager"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-          />
-        </div>
-
-        {/* Scrollable body so the Close button never disappears */}
-        <div style={{ padding: 18, overflowY: "auto" }}>
-          <h3 style={{ margin: "6px 0 8px" }}>{active.name}</h3>
-          <p className="ex-sheet-sub" style={{ opacity: 0.85, marginTop: 0 }}>
-            {active.category} • {active.muscles} • {active.equipment} • {active.difficulty}
-          </p>
-          <ol className="ex-steps" style={{ paddingLeft: 18, marginTop: 12 }}>
-            {active.how.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
-          </ol>
-          <button
-            className="btn-primary"
+      {/* Modal */}
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            className="ex-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
             style={{
-              marginTop: 16,
-              padding: "10px 14px",
-              borderRadius: 10,
-              border: "1px solid rgba(255,255,255,.14)",
-              background: "#1f2937",
-              color: "white",
-              cursor: "pointer",
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,.6)",
+              display: "grid",
+              placeItems: "center",
+              zIndex: 50,
+              padding: 12,
             }}
           >
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+            <motion.div
+              className="ex-sheet"
+              initial={{ y: 40, scale: 0.98 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 40, scale: 0.98 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: "min(900px, 92vw)",
+                maxHeight: "92vh",
+                background: "rgba(15,23,42,.98)",
+                border: "1px solid rgba(255,255,255,.08)",
+                borderRadius: 16,
+                overflow: "hidden",
+                boxShadow: "0 12px 48px rgba(0,0,0,.45)",
+                display: "grid",
+                gridTemplateRows: "auto 1fr",
+                position: "relative",
+              }}
+            >
+              {/* Always-visible Close (X) */}
+              <button
+                aria-label="Close"
+                onClick={() => setActive(null)}
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  padding: "6px 10px",
+                  borderRadius: 10,
+                  border: "1px solid rgba(255,255,255,.18)",
+                  background: "rgba(0,0,0,.35)",
+                  color: "white",
+                  cursor: "pointer",
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                ×
+              </button>
 
+              {/* Hero image */}
+              <div
+                className="ex-sheet-hero"
+                style={{ height: "min(42vh, 340px)", background: "#0b1220" }}
+              >
+                <img
+                  src={resolveImage(active)}
+                  alt={active.name}
+                  onError={(e) => (e.currentTarget.src = PLACEHOLDER)}
+                  loading="eager"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </div>
+
+              {/* Scrollable body */}
+              <div style={{ padding: 18, overflowY: "auto" }}>
+                <h3 style={{ margin: "6px 0 8px" }}>{active.name}</h3>
+                <p
+                  className="ex-sheet-sub"
+                  style={{ opacity: 0.85, marginTop: 0 }}
+                >
+                  {active.category} • {active.muscles} • {active.equipment} •{" "}
+                  {active.difficulty}
+                </p>
+                <ol
+                  className="ex-steps"
+                  style={{ paddingLeft: 18, marginTop: 12 }}
+                >
+                  {active.how.map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
+                </ol>
+                <button
+                  className="btn-primary"
+                  onClick={() => setActive(null)}
+                  style={{
+                    marginTop: 16,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    border: "1px solid rgba(255,255,255,.14)",
+                    background: "#1f2937",
+                    color: "white",
+                    cursor: "pointer",
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div> // <-- closes the page wrapper
+  );
+}
