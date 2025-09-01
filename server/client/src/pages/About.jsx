@@ -1,24 +1,57 @@
-import { motion } from "framer-motion";
+import React from "react";
 
-export default function About(){
+export default function About() {
   return (
-    <motion.section
-      className="card"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: .35, ease: "easeOut" }}
-    >
-      <h2>About NutriVision</h2>
-      <p className="muted">
-        NutriVision is a full-stack demo that uses a Food-101 image classifier
-        (via Hugging Face Inference API) to recognize meals from photos and
-        estimate calories & macros using a per-100g nutrition table.
-      </p>
-      <ul>
-        <li>Frontend: React + Vite</li>
-        <li>Backend: Node + Express</li>
-        <li>ML: <code>nateraw/food</code> model</li>
-      </ul>
-    </motion.section>
+    <main className="about-wrap">
+      <section className="about-card" role="region" aria-labelledby="about-title">
+        <h1 id="about-title" className="about-title">About NutriVision</h1>
+        <p className="about-lead">
+          NutriVision helps you understand your meals at a glance. Using a Food-101
+          image classifier and a per-100g nutrition table, we estimate calories and
+          macros and give you practical tips for healthier choices.
+        </p>
+
+        <ul className="list">
+          <li><strong>Frontend:</strong> React + Vite</li>
+          <li><strong>Backend:</strong> Node + Express</li>
+          <li><strong>ML:</strong> Food-101 model</li>
+        </ul>
+
+        <div className="about-grid">
+          <div className="about-block">
+            <h3>Our Site</h3>
+            <p>
+              Fast, lightweight and privacy-respecting. Upload a food photo, get
+              instant insights, and save your results for later review.
+            </p>
+          </div>
+
+          <div className="about-block">
+            <h3>Healthy Habits</h3>
+            <p>
+              We focus on consistency over perfection: balanced plates, mindful
+              portions, water first, and daily movement you enjoy.
+            </p>
+          </div>
+
+          <div className="about-block">
+            <h3>Food</h3>
+            <p>
+              Mix whole foods—lean proteins, colorful veggies, smart carbs, and
+              healthy fats. NutriVision shows you how each meal contributes to your
+              goals.
+            </p>
+          </div>
+
+          <div className="about-block">
+            <h3>Sport & Activity</h3>
+            <p>
+              Track progress with Apple Health or Google Fit. Strength + cardio +
+              recovery = long-term performance and better energy.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
