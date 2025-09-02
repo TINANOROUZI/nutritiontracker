@@ -1,62 +1,53 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-export default function Login({ onLogin }) {
+export default function Login() {
+  const { login } = useAuth();
+  const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (typeof onLogin === "function") onLogin(email, password);
-    // else: handle your existing login flow here
-  };
+  async function onSubmit(e) {
+    e.preventDefault();               // <- critical so the page doesn't reload
+    setErr("");
+    setLoading(true);
+    try {
+      await login(email, password);   // calls api.login (credentials included)
+      nav("/");                       // go somewhere after login
+    } catch (e) {
+      setErr(e.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <main className="auth-wrap">
+    <div className="auth-wrap">
       <div className="auth-card">
         <h1 className="auth-title">Log in</h1>
-        <p className="auth-sub">Welcome back! Enter your details.</p>
+        {err && <div className="bmi-msg" style={{color:"#fca5a5"}}>{err}</div>}
 
-        <form onSubmit={handleSubmit} className="form">
+        <form className="form" onSubmit={onSubmit}>
           <div className="form-row">
-            <label htmlFor="email">Email</label>
-            <input
-              className="input"
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              autoComplete="email"
-              required
-            />
+            <label>Email</label>
+            <input className="input" type="email" value={email}
+                   onChange={(e)=>setEmail(e.target.value)} required />
           </div>
 
           <div className="form-row">
-            <label htmlFor="password">Password</label>
-            <input
-              className="input"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              required
-            />
+            <label>Password</label>
+            <input className="input" type="password" value={password}
+                   onChange={(e)=>setPassword(e.target.value)} required />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-wide">
-            Log in
+          <button className="btn-primary" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
-
-        <p className="auth-alt">
-          No account yet?{" "}
-          <a href="/signup" className="link">
-            Create account
-          </a>
-        </p>
       </div>
-    </main>
+    </div>
   );
 }
