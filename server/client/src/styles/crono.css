@@ -151,41 +151,65 @@ header.nav .nav-inner{
   background:#0b1222; border:1px solid var(--stroke); color:var(--ink);
   border-radius:12px; padding:.7rem .8rem;
 }
+/* --- Modern BMI result tile: glass core + progress ring --- */
 .bmi-value{
-  --accent:#60a5fa;
-  position: relative;
-  width:130px; height:120px;
-  margin:.7rem auto .35rem;
+  --accent:#60a5fa;          /* ring color (overridden by category) */
+  --angle:0deg;              /* JS/React sets this 0–360deg */
+  position:relative;
+  width:140px; height:140px;
+  margin:.7rem auto .25rem;
   border-radius:22px;
-  border:1px solid rgba(96,165,250,.18);
-  box-shadow: inset 0 10px 18px rgba(0,0,0,.35), 0 10px 28px rgba(0,0,0,.35);
-  background: radial-gradient(120px 80px at 50% 22%, rgba(96,165,250,.9), rgba(96,165,250,0) 70%),
-              linear-gradient(180deg,#18243b 0%, #0f1629 60%, #0b1222 100%);
   display:grid; place-items:center;
-  font-size:2rem; font-weight:800; letter-spacing:.5px; color:#eef3ff;
+  font-size:2.05rem; font-weight:900; letter-spacing:.3px;
+  color:#eef3ff; text-shadow:0 1px 0 rgba(0,0,0,.25);
 }
+
+/* conic progress ring */
 .bmi-value::before{
-  content:""; position:absolute; left:12%; right:12%; top:10%;
-  height:28px; border-radius:18px;
-  background:linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0));
-  filter:blur(1px); pointer-events:none;
-}
-.bmi-value::after{
-  content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-10px;
-  width:60%; height:12px;
-  background:radial-gradient(60% 100% at 50% 0%, rgba(0,0,0,.45), transparent 70%);
+  content:"";
+  position:absolute; inset:0; border-radius:inherit;
+  background: conic-gradient(var(--accent) var(--angle), #27324f 0);
+  padding:7px; /* ring thickness */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 10px 28px rgba(0,0,0,.35));
   pointer-events:none;
 }
-.bmi-label{ font-weight:800; margin:.05rem 0 .15rem; text-align:center; font-size:.95rem; letter-spacing:.2px; }
-.bmi-tip{ color:var(--muted); font-size:.9rem; text-align:center; line-height:1.35; margin-top:.15rem; }
-.bmi-msg{ color:#a3e635; font-weight:700; margin-top:.4rem; text-align:center; font-size:.95rem; }
-.bmi-btn{
-  display:block; width:100%; margin-top:.5rem;
-  border:1px solid transparent; background:#16a34a; color:#fff;
-  font-weight:600; border-radius:10px; padding:.55rem .8rem;
-  cursor:pointer; transition:.18s ease;
+
+/* glassy inner core */
+.bmi-value::after{
+  content:"";
+  position:absolute; inset:7px; border-radius:inherit;
+  background:
+    radial-gradient(90% 60% at 50% 22%, rgba(255,255,255,.15), rgba(255,255,255,0) 55%),
+    linear-gradient(180deg,#162238 0%, #0b1222 100%);
+  box-shadow:
+    inset 0 18px 34px rgba(0,0,0,.55),
+    0 1px 0 rgba(255,255,255,.06);
+  pointer-events:none;
 }
-.bmi-btn:hover{ background:#15803d }
+
+/* category chip (replaces the plain label look) */
+.bmi-label{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:.32rem .7rem; margin:.2rem auto 0; width:fit-content;
+  border-radius:999px; font-weight:800; font-size:.95rem; letter-spacing:.2px;
+  border:1px solid #33476f; background:rgba(99,123,166,.14); color:#dbe8ff;
+}
+
+/* category themes (apply class on .bmi-card) */
+.bmi-card.bmi--ok  .bmi-value{ --accent:#22c55e; } /* Healthy */
+.bmi-card.bmi--ok  .bmi-label{ border-color:#2bb96f; background:rgba(34,197,94,.14); color:#c9ffda; }
+
+.bmi-card.bmi--uw  .bmi-value{ --accent:#38bdf8; } /* Underweight */
+.bmi-card.bmi--uw  .bmi-label{ border-color:#49a9e8; background:rgba(56,189,248,.15); color:#d7f1ff; }
+
+.bmi-card.bmi--ow  .bmi-value{ --accent:#f59e0b; } /* Overweight */
+.bmi-card.bmi--ow  .bmi-label{ border-color:#f2a63a; background:rgba(245,158,11,.16); color:#ffe9c6; }
+
+.bmi-card.bmi--ob  .bmi-value{ --accent:#ef4444; } /* Obese */
+.bmi-card.bmi--ob  .bmi-label{ border-color:#ef6666; background:rgba(239,68,68,.16); color:#ffd6d6; }
+
 
 /* ===================== HERO/FEATURES ===================== */
 .features{margin:1.2rem 0 1.8rem}
