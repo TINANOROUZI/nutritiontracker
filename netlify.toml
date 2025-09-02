@@ -1,0 +1,12 @@
+# Tell Netlify your frontend lives in server/client
+[build]
+  base = "server/client"
+  publish = "dist"
+  command = "npm ci && npm run build"
+
+# Proxy all /api/* requests to your Render API (kills CORS)
+[[redirects]]
+  from = "/api/*"
+  to   = "https://nutrition-tracker-t8be.onrender.com/api/:splat"
+  status = 200
+  force  = true
