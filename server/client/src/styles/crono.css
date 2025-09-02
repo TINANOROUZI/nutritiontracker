@@ -210,6 +210,11 @@ header.nav .nav-inner{
 .bmi-card.bmi--ob  .bmi-value{ --accent:#ef4444; } /* Obese */
 .bmi-card.bmi--ob  .bmi-label{ border-color:#ef6666; background:rgba(239,68,68,.16); color:#ffd6d6; }
 
+/* ensure pseudos sit behind the text */
+.bmi-result{ position: relative; z-index: 0; }
+.bmi-result::before,
+.bmi-result::after{ z-index: -1; }
+.bmi-result span{ position: relative; z-index: 1; }  /* extra safety */
 
 /* ===================== HERO/FEATURES ===================== */
 .features{margin:1.2rem 0 1.8rem}
