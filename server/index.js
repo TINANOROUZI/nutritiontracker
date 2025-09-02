@@ -27,11 +27,48 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const HF_API_TOKEN = (process.env.HF_API_TOKEN || "").trim();
 const MODEL_ID = process.env.MODEL_ID || "nateraw/food";
 
-// Allow your Netlify + localhost
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
-  "http://localhost:5173,http://127.0.0.1:5173")
+/* ===================== CORS (Netlify + previews + localhost) ===================== */
+const NETLIFY_BASE = process.env.NETLIFY_BASE || "nutritiontracker-tina.netlify.app";
+
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  `https://${NETLIFY_BASE}`,
+].join(","))
   .split(",")
-  .map((s) => s.trim());
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+// trust proxy so secure cookies work behind Render
+app.set("trust proxy", 1);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true; // allow curl/postman
+  try {
+    const u = new URL(origin);
+    if (ALLOWED_ORIGINS.includes(origin)) return true;
+    const host = u.host.toLowerCase();
+    if (host === NETLIFY_BASE) return true;
+    if (host.endsWith(`--${NETLIFY_BASE}`)) return true; // Netlify previews
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+const corsOptions = {
+  origin(origin, cb) {
+    const ok = isAllowedOrigin(origin);
+    cb(ok ? null : new Error("CORS: origin not allowed"), ok);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+/* ================================================================================ */
 
 // Writable dir for users.json (Render-safe)
 const DATA_DIR =
@@ -43,17 +80,6 @@ const USERS_FILE = path.join(DATA_DIR, "users.json");
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(
-  cors({
-    origin(origin, cb) {
-      if (!origin) return cb(null, true); // allow curl/postman
-      return ALLOWED_ORIGINS.includes(origin)
-        ? cb(null, true)
-        : cb(new Error("CORS: origin not allowed"));
-    },
-    credentials: true,
-  })
-);
 
 // ---------- data helpers ----------
 async function ensureData() {
@@ -106,7 +132,10 @@ function requireAuth(req, res, next) {
   const token = req.cookies?.auth;
   if (!token) return res.status(401).json({ error: "Not authenticated" });
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET || "dev-secret-change-me");
+    req.user = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "dev-secret-change-me"
+    );
     next();
   } catch {
     return res.status(401).json({ error: "Invalid session" });
@@ -120,7 +149,9 @@ app.get("/ping", (_req, res) => res.send("ok"));
 app.post("/api/auth/register", async (req, res) => {
   const { email, password, name = "" } = req.body || {};
   if (!email || !password)
-    return res.status(400).json({ error: "Email and password are required" });
+    return res
+      .status(400)
+      .json({ error: "Email and password are required" });
 
   const users = await readUsers();
   if (users.find((u) => u.email.toLowerCase() === email.toLowerCase()))
@@ -145,7 +176,9 @@ app.post("/api/auth/register", async (req, res) => {
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password)
-    return res.status(400).json({ error: "Email and password are required" });
+    return res
+      .status(400)
+      .json({ error: "Email and password are required" });
 
   const users = await readUsers();
   const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
@@ -244,7 +277,9 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
     }
 
     if (!HF_API_TOKEN || !HF_API_TOKEN.startsWith("hf_")) {
-      return res.status(500).json({ error: "HF_API_TOKEN not set or invalid on server" });
+      return res
+        .status(500)
+        .json({ error: "HF_API_TOKEN not set or invalid on server" });
     }
     const bytes = req.file?.buffer;
     if (!bytes) return res.status(400).json({ error: "No image uploaded" });
@@ -273,7 +308,9 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
 
     const result = await callHF();
     if (!result.ok) {
-      return res.status(result.status).json({ error: result.body || `Hugging Face error ${result.status}` });
+      return res
+        .status(result.status)
+        .json({ error: result.body || `Hugging Face error ${result.status}` });
     }
 
     const out = result.data;
