@@ -1,7 +1,7 @@
-import { useState } from "react";
+
 
 function mapAngle(bmi) {
-  const min = 14, max = 40;
+  const min = 14, max = 40;                   // clamp to sensible range
   const pct = Math.max(0, Math.min(1, (bmi - min) / (max - min)));
   return Math.round(pct * 360);
 }
@@ -57,10 +57,12 @@ export default function BmiWidget() {
 
       <button className="bmi-btn" onClick={calcBMI}>Calculate</button>
 
+      {/* Modern result tile */}
       <div className="bmi-result" style={{ ["--angle"]: `${angle}deg` }}>
         <span>{bmi ? bmi.toFixed(1) : "--"}</span>
       </div>
 
+      {/* Category chip */}
       <div className="bmi-chip">{cat.label}</div>
 
       <p className="bmi-note">
@@ -69,3 +71,4 @@ export default function BmiWidget() {
     </div>
   );
 }
+
