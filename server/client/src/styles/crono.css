@@ -355,33 +355,40 @@ header.nav{
   transform:translateY(1px);
 }
 
-/* Auth inputs */
-.auth-card .input{
-  background:#0b1222;
-  border:1px solid var(--stroke);
-  color:var(--ink);
-  border-radius:12px;
-  padding:.85rem 1rem;
-}
-.auth-card .input:focus{
-  border-color:#335abf;
-  box-shadow:0 0 0 3px rgba(96,165,250,.2);
-}
-
-/* Auth primary action */
+/* --- Make sure auth submit buttons always show and are clickable --- */
 .auth-card .btn-primary,
 .auth-card button[type="submit"]{
-  background: linear-gradient(90deg,#ff8a1e,#ffd08a);
-  color:#23180a;
-  border:0;
-  border-radius:12px;
-  padding:.75rem 1rem;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow: var(--ring);
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+
+  /* visual */
+  background: linear-gradient(90deg, var(--accent, #ff8a1e), #ffd08a) !important;
+  color: #23180a !important;
+  border: 0 !important;
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  font-weight: 800;
+  box-shadow: var(--ring, 0 8px 30px rgba(0,0,0,.35));
 }
+
 .auth-card .btn-primary:hover,
 .auth-card button[type="submit"]:hover{
   filter: brightness(0.97);
 }
+
+.auth-card .btn-primary:disabled,
+.auth-card button[type="submit"]:disabled{
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+/* Safety: the form and its children must accept clicks */
+.auth-card, .auth-card * { pointer-events: auto !important; }
+
+/* Safety: if you use a drawer/backdrop, it should NOT block when closed */
+.drawer, .drawer-backdrop { pointer-events: none; opacity: 0; }
+.drawer.show, .drawer-backdrop.show { pointer-events: auto; opacity: 1; }
 
