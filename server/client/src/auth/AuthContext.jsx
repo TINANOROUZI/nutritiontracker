@@ -1,5 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as api from "../api";
+// fetch
+await fetch(`${API_BASE}/api/auth/me`, { credentials: "include" });
+
+// axios
+import axios from "axios";
+const api = axios.create({ baseURL: API_BASE, withCredentials: true });
+await api.get("/api/auth/me");
 
 const Ctx = createContext(null);
 export const useAuth = () => useContext(Ctx);
