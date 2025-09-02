@@ -1,78 +1,60 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-export default function Signup({ onSignup }) {
-  const [name, setName] = useState("");
+export default function Signup() {
+  const { register } = useAuth();
+  const nav = useNavigate();
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (typeof onSignup === "function") {
-      onSignup({ name, email, password });
+  async function onSubmit(e) {
+    e.preventDefault();                     // <- critical
+    setErr("");
+    setLoading(true);
+    try {
+      await register(email, password, name); // calls api.register
+      nav("/");                              // go somewhere after signup
+    } catch (e) {
+      setErr(e.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
-    // else: connect to your existing signup API here
-  };
+  }
 
   return (
-    <main className="auth-wrap">
-      <section className="auth-card" role="region" aria-labelledby="signup-title">
-        <h1 id="signup-title" className="auth-title">Create account</h1>
-        <p className="auth-sub">Start your journey in seconds.</p>
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <h1 className="auth-title">Create account</h1>
+        {err && <div className="bmi-msg" style={{color:"#fca5a5"}}>{err}</div>}
 
-        <form onSubmit={handleSubmit} className="form">
+        <form className="form" onSubmit={onSubmit}>
           <div className="form-row">
-            <label htmlFor="name">Name</label>
-            <input
-              className="input"
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              autoComplete="name"
-              required
-            />
+            <label>Name (optional)</label>
+            <input className="input" value={name}
+                   onChange={(e)=>setName(e.target.value)} />
           </div>
 
           <div className="form-row">
-            <label htmlFor="email">Email</label>
-            <input
-              className="input"
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              autoComplete="email"
-              required
-            />
+            <label>Email</label>
+            <input className="input" type="email" value={email}
+                   onChange={(e)=>setEmail(e.target.value)} required />
           </div>
 
           <div className="form-row">
-            <label htmlFor="password">Password</label>
-            <input
-              className="input"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="new-password"
-              required
-              minLength={6}
-            />
+            <label>Password</label>
+            <input className="input" type="password" value={password}
+                   onChange={(e)=>setPassword(e.target.value)} required />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-wide">
-            Sign up
+          <button className="btn-primary" type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Sign up"}
           </button>
         </form>
-
-        <p className="auth-alt">
-          Already have an account?{" "}
-          <a href="/login" className="link">Log in</a>
-        </p>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
