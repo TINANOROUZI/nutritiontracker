@@ -1,12 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as api from "../api";
-// fetch
-await fetch(`${API_BASE}/api/auth/me`, { credentials: "include" });
-
-// axios
-import axios from "axios";
-const api = axios.create({ baseURL: API_BASE, withCredentials: true });
-await api.get("/api/auth/me");
 
 const Ctx = createContext(null);
 export const useAuth = () => useContext(Ctx);
@@ -39,7 +32,11 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try { await api.logout(); } finally { setUser(null); }
+    try {
+      await api.logout();
+    } finally {
+      setUser(null);
+    }
   };
 
   const value = { user, loading, login, register, logout, setUser };
